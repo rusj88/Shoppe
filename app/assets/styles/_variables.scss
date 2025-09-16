@@ -1,0 +1,64 @@
+$bp-sm: 640px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1280px;
+$bp-xxl: 1536px;
+
+$font-sans:
+  'DM Sans',
+  system-ui,
+  -apple-system,
+  'Segoe UI',
+  Roboto,
+  sans-serif;
+$font-mono: 'Roboto Mono', ui-monospace, monospace;
+
+$font-dm-sans: 'DM Sans', $font-sans;
+$font-allerta-stencil: 'Allerta Stencil', $font-sans;
+$font-red-hat-display: 'Red Hat Display', $font-sans;
+$font-roboto: 'Roboto', $font-sans;
+$font-lato: 'Lato', $font-sans;
+
+$font-body: $font-dm-sans;
+$font-heading: $font-red-hat-display;
+$font-accent: $font-allerta-stencil;
+$font-code: $font-mono;
+
+$color-black: #000000;
+$color-white: #ffffff;
+$gray-900: #0a0a0a;
+$gray-800: #262626;
+$gray-750: #333333;
+$gray-700: #3d3d3d;
+$gray-650: #575757;
+$gray-600: #707070;
+$gray-500: #999999;
+$gray-450: #9e9e9e;
+$gray-400: #c4c4c4;
+$gray-350: #d6d6d6;
+$gray-300: #d9d9d9;
+$gray-250: #e0e0e0;
+$gray-200: #f0f0f0;
+$gray-100: #fafafa;
+
+$color-brand-primary: #a18a69;
+$color-brand-secondary: #b5a187;
+
+$color-accent-red: #d92600;
+$color-accent-green: #008000;
+
+$color-text: $gray-750;
+$color-text-light: $gray-500;
+$color-text-dark: $gray-900;
+
+$color-bg: $color-white;
+$color-bg-alt: $gray-100;
+
+$color-border: $gray-300;
+$color-border-subtle: $gray-200;
+
+$color-primary: $color-brand-primary;
+$color-secondary: $color-brand-secondary;
+
+$color-success: $color-accent-green;
+$color-error: $color-accent-red;

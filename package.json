@@ -1,0 +1,48 @@
+{
+  "name": "nuxt-app",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:styles": "stylelint \"**/*.{vue,scss}\"",
+    "format": "prettier --write .",
+    "lint:fix": "npm run format && npm run lint:styles -- --fix && npm run lint -- --fix",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@types/node": "^24.4.0",
+    "@typescript-eslint/eslint-plugin": "^8.34.1",
+    "@typescript-eslint/parser": "^8.34.1",
+    "eslint": "^9.29.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-vue": "^10.2.0",
+    "globals": "^16.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "postcss-html": "^1.8.0",
+    "postcss-scss": "^4.0.9",
+    "prettier": "^3.5.3",
+    "sass-embedded": "^1.92.1",
+    "stylelint": "^16.21.0",
+    "stylelint-config-recess-order": "^7.1.0",
+    "stylelint-config-standard-scss": "^15.0.1",
+    "stylelint-config-standard-vue": "^1.0.0"
+  },
+  "dependencies": {
+    "@nuxt/fonts": "^0.11.4",
+    "nuxt": "3.17.3",
+    "nuxt-svgo": "^4.2.6",
+    "vue": "^3.5.21",
+    "vue-router": "^4.5.1"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": "eslint --fix",
+    "*.{vue,scss}": "stylelint --fix",
+    "*.{js,ts,vue,scss,md,json}": "prettier --write"
+  }
+}
