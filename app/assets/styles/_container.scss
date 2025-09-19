@@ -1,6 +1,7 @@
 @use './variables' as *;
 
 .container {
+  position: relative;
   width: 96%;
   max-width: 346px;
   padding: 0 16px;
