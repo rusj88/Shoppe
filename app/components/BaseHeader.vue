@@ -7,7 +7,6 @@
   import CartIcon from '@/assets/icons/cart.svg'
   import BurgerIcon from '@/assets/icons/burger.svg'
   import CloseIcon from '@/assets/icons/close.svg'
-  import LogoutIcon from '@/assets/icons/logout.svg'
 
   const isMenuOpen = ref(false)
   const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value)
@@ -73,29 +72,9 @@
   <div class="search-container">
     <SearchInput placeholder="Search" />
   </div>
-  <MobileMenu v-model="isMenuOpen">
-    <ul class="mm-list">
-      <li v-for="link in links" :key="link.to">
-        <NuxtLink :to="link.to">{{ link.label }}</NuxtLink>
-      </li>
-    </ul>
-
-    <hr class="mm-divider" />
-
-    <ul class="mm-actions">
-      <li>
-        <NuxtLink to="/account" class="row" @click="isMenuOpen = false">
-          <span class="icon"> <UserIcon /></span>
-          <span>My account</span>
-        </NuxtLink>
-      </li>
-      <li>
-        <span class="row"
-          ><span class="icon"><LogoutIcon /></span> <span>Logout</span></span
-        >
-      </li>
-    </ul>
-  </MobileMenu>
+  <BaseDrawer v-model="isMenuOpen">
+    <MobileMenu :links="links" />
+  </BaseDrawer>
 </template>
 
 <style lang="scss" scoped>
@@ -183,12 +162,6 @@
     }
   }
 
-  .row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-
   .nav-list {
     display: none;
 
@@ -199,20 +172,6 @@
       font-family: $font-dm-sans;
       font-size: 16px;
     }
-  }
-
-  .mm-divider {
-    height: 1px;
-    margin: 24px 0;
-    background: #d8d8d8;
-    border: 0;
-  }
-
-  .mm-list,
-  .mm-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
   }
 
   .search-container {

@@ -2,25 +2,22 @@
   import { ref } from 'vue'
   import SearchIcon from '@/assets/icons/find.svg'
 
-  const props = defineProps<{
-    modelValue?: string
+  const model = defineModel<string>({ default: '' })
+
+  defineProps<{
     placeholder?: string
     autoFocus?: boolean
   }>()
 
   const emit = defineEmits<{
-    (e: 'update:modelValue', v: string): void
     (e: 'submit', v: string): void
   }>()
 
   const inputEl = ref<HTMLInputElement | null>(null)
 
-  function onInput(e: Event) {
-    emit('update:modelValue', (e.target as HTMLInputElement).value)
-  }
   function onSubmit(e: Event) {
     e.preventDefault()
-    emit('submit', props.modelValue ?? '')
+    emit('submit', model.value)
   }
 </script>
 
@@ -32,14 +29,13 @@
 
     <input
       ref="inputEl"
+      v-model="model"
       class="si-input"
       type="search"
-      :value="modelValue || ''"
       :placeholder="placeholder || 'Search…'"
       :autofocus="autoFocus"
       autocomplete="off"
       spellcheck="false"
-      @input="onInput"
     />
   </form>
 </template>
