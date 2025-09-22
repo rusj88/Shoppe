@@ -1,7 +1,6 @@
 <script setup lang="ts">
-  import { useNuxtApp } from 'nuxt/app'
-  import { onMounted, onUnmounted, watch, watchEffect } from 'vue'
-  import type { Breakpoints } from '@/types'
+  import { onUnmounted, watch, watchEffect } from 'vue'
+  import { useBreakpointsTyped } from '@/plugins/breakpoints'
 
   const model = defineModel<boolean>()
 
@@ -15,15 +14,12 @@
       }
     },
   )
+  const $breakpoints = useBreakpointsTyped()
 
-  onMounted(() => {
-    const { $breakpoints } = useNuxtApp() as unknown as { $breakpoints: Breakpoints }
-
-    watchEffect(() => {
-      if ($breakpoints.md) {
-        model.value = false
-      }
-    })
+  watchEffect(() => {
+    if ($breakpoints.md.value) {
+      model.value = false
+    }
   })
 
   onUnmounted(() => {
