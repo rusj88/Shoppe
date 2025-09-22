@@ -9,10 +9,6 @@ interface Breakpoints {
   xxl: Ref<boolean>
 }
 
-export const useBreakpointsTyped = (): Breakpoints => {
-  return useNuxtApp().$breakpoints as Breakpoints
-}
-
 export default defineNuxtPlugin((nuxtApp) => {
   const sm = ref(false)
   const md = ref(false)
@@ -21,7 +17,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   const xxl = ref(false)
 
   const breakpoints: Breakpoints = { sm, md, lg, xl, xxl }
-  nuxtApp.provide('breakpoints', breakpoints)
 
   if (import.meta.client) {
     const BP_SM = 640,
@@ -42,4 +37,10 @@ export default defineNuxtPlugin((nuxtApp) => {
     window.addEventListener('resize', onResize)
     onResize()
   }
+
+  nuxtApp.provide('breakpoints', breakpoints)
 })
+
+export const useBreakpointsTyped = (): Breakpoints => {
+  return useNuxtApp().$breakpoints as Breakpoints
+}
