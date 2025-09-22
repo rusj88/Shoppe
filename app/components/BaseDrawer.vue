@@ -1,5 +1,7 @@
 <script setup lang="ts">
-  import { onBeforeUnmount, onMounted, onUnmounted, watch } from 'vue'
+  import { useNuxtApp } from 'nuxt/app'
+  import { onMounted, onUnmounted, watch, watchEffect } from 'vue'
+  import type { Breakpoints } from '@/types'
 
   const model = defineModel<boolean>()
 
@@ -15,23 +17,12 @@
   )
 
   onMounted(() => {
-    const breakpointMd = parseInt(
-      getComputedStyle(document.documentElement).getPropertyValue('--bp-md'),
-    )
+    const { $breakpoints } = useNuxtApp() as unknown as { $breakpoints: Breakpoints }
 
-    const mq = window.matchMedia(`(min-width: ${breakpointMd}px)`)
-
-    const handler = (e: MediaQueryListEvent | MediaQueryList) => {
-      if (e.matches) {
+    watchEffect(() => {
+      if ($breakpoints.md) {
         model.value = false
       }
-    }
-
-    handler(mq)
-
-    mq.addEventListener('change', handler)
-    onBeforeUnmount(() => {
-      mq.removeEventListener('change', handler)
     })
   })
 

@@ -1,10 +1,11 @@
 <script setup lang="ts">
   import LogoutIcon from '@/assets/icons/logout.svg'
   import UserIcon from '@/assets/icons/user.svg'
+  import type { NavLink } from '@/types'
 
   const props = withDefaults(
     defineProps<{
-      links?: { label: string; to: string }[]
+      links?: NavLink[]
     }>(),
     {
       links: () => [],
