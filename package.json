@@ -15,6 +15,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@nuxt/image": "^1.11.0",
     "@types/node": "^24.4.0",
     "@typescript-eslint/eslint-plugin": "^8.34.1",
     "@typescript-eslint/parser": "^8.34.1",
@@ -37,6 +38,7 @@
     "@nuxt/fonts": "^0.11.4",
     "nuxt": "3.17.3",
     "nuxt-svgo": "^4.2.6",
+    "swiper": "^12.0.2",
     "vue": "^3.5.21",
     "vue-router": "^4.5.1"
   },
