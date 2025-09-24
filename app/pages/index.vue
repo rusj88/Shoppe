@@ -1,5 +1,5 @@
 <template>
   <div>
-    <HomeSlider />
+    <HomeSection />
   </div>
 </template>
