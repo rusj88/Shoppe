@@ -1,12 +1,11 @@
 <script setup lang="ts">
-  import { Swiper, SwiperSlide } from 'swiper/vue'
+  import { Swiper } from 'swiper/vue'
   import 'swiper/css'
   import 'swiper/css/pagination'
   import type { MySwiperOptions } from '@/types'
   import { ref } from 'vue'
 
   defineProps<{
-    slides: string[]
     settings?: MySwiperOptions
   }>()
 
@@ -20,17 +19,7 @@
   <div class="slider-wrapper">
     <div v-if="isLoading" class="slider-loader">Loading…</div>
     <Swiper v-show="!isLoading" v-bind="settings" @swiper="onSwiperReady">
-      <SwiperSlide
-        v-for="(slide, i) in slides"
-        :key="i"
-        :virtualIndex="settings?.virtual ? i : undefined"
-      >
-        <img :src="slide" loading="lazy" />
-        <div class="swiper-lazy-preloader"></div>
-        <div class="slider-overlay">
-          <slot :slide="slide" :index="i" />
-        </div>
-      </SwiperSlide>
+      <slot />
     </Swiper>
   </div>
 </template>
@@ -45,30 +34,10 @@
     height: 354px;
 
     @media (min-width: $bp-lg) {
-      --swiper-pagination-bullet-horizontal-gap: 12px;
+      --swiper-pagination-bullet-horizontal-gap: 8px;
 
       height: 646px;
     }
-  }
-
-  .slider-overlay {
-    position: absolute;
-    bottom: 25px;
-    left: 8px;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    @media (min-width: $bp-lg) {
-      bottom: 50%;
-      left: 39px;
-      transform: translateY(50%);
-    }
-  }
-
-  .slider-overlay > * {
-    pointer-events: auto;
   }
 
   :deep(.swiper-slide) {
