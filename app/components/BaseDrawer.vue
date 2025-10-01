@@ -42,7 +42,7 @@
     position: absolute;
     right: 0;
     left: 0;
-    z-index: 10;
+    z-index: 100;
     display: flex;
     flex-direction: column;
     height: 90dvh;
