@@ -40,6 +40,12 @@
     }
   }
 
+  :deep(.swiper-pagination) {
+    @media (min-width: $bp-lg) {
+      bottom: 26px;
+    }
+  }
+
   :deep(.swiper-slide) {
     position: relative;
     overflow: hidden;

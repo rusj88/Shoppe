@@ -23,7 +23,7 @@
 
 <template>
   <div class="slider-container">
-    <HomeSlider :settings="settings">
+    <BaseSlider :settings="settings">
       <SwiperSlide
         v-for="(slide, i) in slides"
         :key="i"
@@ -35,7 +35,7 @@
           <SlideOverlay :img="slide" :index="i" />
         </div>
       </SwiperSlide>
-    </HomeSlider>
+    </BaseSlider>
   </div>
 </template>
 
