@@ -11,7 +11,7 @@
       <div class="container">
         <div class="alert">
           <div class="message-row">
-            <CheckIcon v-if="state.showIcon" />
+            <CheckIcon v-if="state.showIcon" class="check-icon" />
             <p class="message">{{ state.message }}</p>
           </div>
 
@@ -41,9 +41,9 @@
   .alert {
     position: relative;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 10px 14px;
+    min-height: 68px;
+    padding: 15px 16px;
     font-family: $font-dm-sans;
     font-size: 12px;
     background: $light-gray;
@@ -51,7 +51,22 @@
     box-shadow: 0 4px 4px 0 rgb(0 0 0 / 25%);
 
     @media (min-width: $bp-lg) {
-      min-height: 68px;
+      align-items: center;
+      padding: 20px 23px 16px 39px;
+    }
+  }
+
+  .check-icon {
+    width: 16px;
+    height: 16px;
+
+    & ::v-deep(path) {
+      fill: #a18a68;
+    }
+
+    @media (min-width: $bp-lg) {
+      width: 20px;
+      height: 20px;
     }
   }
 
@@ -66,9 +81,14 @@
 
   .message-row {
     display: flex;
-    gap: 6px;
-    align-items: center;
+    gap: 25px;
+    align-items: flex-start;
     min-width: 0;
+
+    @media (min-width: $bp-lg) {
+      gap: 16px;
+      align-items: center;
+    }
   }
 
   .alert-link {

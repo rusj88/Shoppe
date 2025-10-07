@@ -6,7 +6,7 @@
 
 <template>
   <div class="header">
-    <h2 class="products-heading">Shop the latest</h2>
+    <h2 class="products-heading">Shop The Latest</h2>
     <NuxtLink to="/shop" class="view-all">View all</NuxtLink>
   </div>
   <Transition name="fade" mode="out-in">
@@ -15,14 +15,9 @@
 
       <p v-else-if="error" class="error">Unable to fetch products. Try again later</p>
 
-      <ProductCard
-        v-for="product in products"
-        v-else
-        :key="product.id"
-        :title="product.title"
-        :image="product.image"
-        :price="product.price"
-      />
+      <template v-else>
+        <ProductCard v-for="product in products" :key="product.id" :product="product"
+      /></template>
     </section>
   </Transition>
 </template>
@@ -47,10 +42,16 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin: 21px 0 13px;
     font-family: $font-dm-sans;
+
+    @media (min-width: $bp-lg) {
+      margin: 64px 0 39px;
+    }
   }
 
   .products-heading {
+    margin: 0;
     font-size: 16px;
 
     @media (min-width: $bp-lg) {

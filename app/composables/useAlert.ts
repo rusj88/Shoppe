@@ -2,14 +2,16 @@ import { useState } from 'nuxt/app'
 import { reactive } from 'vue'
 import type { NavLink } from '@/types'
 
-type AlertState = {
+interface AlertState {
   open: boolean
   message: string
   showIcon: boolean
-  link: NavLink | null
-  timerId: ReturnType<typeof setTimeout> | null
+  link?: NavLink
+  delay: number
   duration: number
 }
+
+type AlertOptions = Partial<Omit<AlertState, 'open' | 'delay'>> & { message: string }
 
 export function useAlert() {
   const state = useState<AlertState>('alert', () =>
@@ -17,37 +19,35 @@ export function useAlert() {
       open: false,
       message: '',
       showIcon: true,
-      link: null,
-      timerId: null,
+      link: undefined,
+      delay: 0,
       duration: 3000,
     }),
   )
 
+  let timeoutId: ReturnType<typeof setTimeout> | null = null
+
   function hide() {
     state.value.open = false
-    if (state.value.timerId) {
-      clearTimeout(state.value.timerId)
-      state.value.timerId = null
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+      timeoutId = null
     }
   }
 
-  function show(opts: {
-    message: string
-    link?: NavLink | null
-    showIcon?: boolean
-    duration?: number
-  }) {
-    if (state.value.timerId) clearTimeout(state.value.timerId)
+  function show(options: AlertOptions) {
+    if (timeoutId) clearTimeout(timeoutId)
 
-    state.value.message = opts.message
-    state.value.link = opts.link ?? null
-    state.value.showIcon = opts.showIcon ?? true
-    state.value.duration = opts.duration ?? 3000
+    state.value.message = options.message
+    state.value.link = options.link
+    state.value.showIcon = options.showIcon ?? true
+    state.value.duration = options.duration ?? 3000
     state.value.open = true
+    state.value.delay = 0
 
-    state.value.timerId = setTimeout(() => {
+    timeoutId = setTimeout(() => {
       state.value.open = false
-      state.value.timerId = null
+      timeoutId = null
     }, state.value.duration)
   }
 

@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { useAlert } from '@/composables/useAlert'
-  import { onBeforeUnmount, onMounted, ref } from 'vue'
+  import { ref } from 'vue'
+  import { vClickOutside } from '@/directives/vClickOutside'
+  import { Product } from '@/types'
 
   defineProps<{
-    title?: string
-    price?: number
-    image?: string
+    product: Product
   }>()
 
   const { show } = useAlert()
@@ -18,34 +18,33 @@
       revealed.value = true
     }
   }
-
-  function onDocClick(e: MouseEvent) {
-    const el = cardEl.value
-    if (el && !el.contains(e.target as Node)) {
-      revealed.value = false
-    }
+  function onOutside() {
+    revealed.value = false
   }
 
   function addToCart() {
     show({
       message: 'The item was added to your Shopping bag.',
-      link: { to: '/cart', label: 'View cart' },
+      link: { to: '/cart', label: 'VIEW CART' },
       duration: 5000,
     })
   }
-
-  onMounted(() => document.addEventListener('click', onDocClick))
-  onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
 </script>
 
 <template>
-  <article ref="cardEl" class="card" :class="{ revealed }" @click="onCardTap">
+  <article
+    ref="cardEl"
+    v-click-outside="onOutside"
+    class="card"
+    :class="{ revealed }"
+    @click="onCardTap"
+  >
     <div class="image-container">
-      <img :src="image" />
+      <img :src="product.image" />
       <button class="add-btn" @click="addToCart">ADD TO CART</button>
     </div>
-    <span>{{ title }}</span>
-    <span class="price">$ {{ price }}</span>
+    <span class="title">{{ product.title }}</span>
+    <span class="price">$ {{ product.price }}</span>
   </article>
 </template>
 
@@ -56,10 +55,10 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 65px;
+    height: 30px;
     padding: 4px 8px;
     font-family: $font-dm-sans;
-    font-size: 16px;
+    font-size: 12px;
     font-weight: bold;
     color: $color-black;
     pointer-events: none;
@@ -70,6 +69,11 @@
     box-shadow: 0 4px 4px 0 rgb(0 0 0 / 25%);
     opacity: 0;
     transition: opacity 0.2s ease;
+
+    @media (min-width: $bp-lg) {
+      height: 65px;
+      font-size: 16px;
+    }
 
     @media (hover: hover) and (pointer: fine) {
       .card:hover & {
@@ -89,7 +93,6 @@
   .card {
     display: flex;
     flex-direction: column;
-    gap: 6px;
     width: 136px;
     font-family: $font-dm-sans;
     font-size: 14px;
@@ -97,6 +100,19 @@
     @media (min-width: $bp-lg) {
       width: 380px;
       font-size: 20px;
+    }
+  }
+
+  .title {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+    @media (min-width: $bp-lg) {
+      margin-bottom: 16px;
     }
   }
 
@@ -116,11 +132,13 @@
     justify-content: center;
     width: 100%;
     height: 136px;
+    margin-bottom: 6px;
     overflow: hidden;
     border-radius: 4px;
 
     @media (min-width: $bp-lg) {
       height: 380px;
+      margin-bottom: 24px;
     }
   }
 

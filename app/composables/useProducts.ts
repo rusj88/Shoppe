@@ -1,20 +1,12 @@
-import { useFetch } from 'nuxt/app'
-
-export type Product = {
-  id: number
-  title: string
-  price: number
-  description: string
-  category: string
-  image: string
-  rating?: { rate: number; count: number }
-}
+import { useFetch, useRuntimeConfig } from 'nuxt/app'
+import { Product } from '@/types'
 
 export function useJeweleryProducts(delayMs = 1200) {
-  // testing skeleton loader
-  return useFetch<Product[]>('https://fakestoreapi.com/products/category/jewelery', {
+  const config = useRuntimeConfig()
+  const base = (config.public.apiBase as string).replace(/\/+$/, '')
+  return useFetch<Product[]>(`${base}/products/category/${encodeURIComponent('jewelery')}`, {
     onRequest: async () => {
-      if (delayMs) await new Promise((r) => setTimeout(r, delayMs))
+      if (delayMs) await new Promise((resolve) => setTimeout(resolve, delayMs))
     },
     server: false,
   })
