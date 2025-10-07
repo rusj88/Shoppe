@@ -105,6 +105,7 @@
 
   .title {
     display: -webkit-box;
+    margin-bottom: 8px;
     overflow: hidden;
     text-overflow: ellipsis;
     -webkit-line-clamp: 2;
@@ -132,7 +133,7 @@
     justify-content: center;
     width: 100%;
     height: 136px;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     overflow: hidden;
     border-radius: 4px;
 
