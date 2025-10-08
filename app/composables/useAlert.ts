@@ -11,7 +11,12 @@ interface AlertState {
   duration: number
 }
 
-type AlertOptions = Partial<Omit<AlertState, 'open' | 'delay'>> & { message: string }
+interface AlertOptions {
+  message: string
+  showIcon?: boolean
+  link?: NavLink
+  duration?: number
+}
 
 export function useAlert() {
   const state = useState<AlertState>('alert', () =>

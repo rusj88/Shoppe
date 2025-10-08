@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { useJeweleryProducts } from '@/composables/useProducts'
+  import { useJeweleryProducts } from '@/composables/api/useGetJewelery'
 
   const { data: products, pending, error } = useJeweleryProducts()
 </script>
