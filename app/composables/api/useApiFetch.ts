@@ -4,14 +4,16 @@ export const useApiFetch = <DataT = unknown>(request: string, options?: UseFetch
   const config = useRuntimeConfig()
   const authToken = useCookie('authToken')
 
-  const base = (config.public.apiBase as string | undefined)?.replace(/\/+$/, '')
+  const base = config.public.apiBase
 
-  if (!base) {
+  if (typeof base !== 'string' || !base) {
     throw new Error('API_BASE_URL is not set')
   }
 
+  const baseFormatted = base.replace(/\/+$/, '')
+
   const defaults: UseFetchOptions<DataT> = {
-    baseURL: base,
+    baseURL: baseFormatted,
     key: request + JSON.stringify(options?.params), // нужно для кеширования
     headers: {
       'Content-Type': 'application/json',
