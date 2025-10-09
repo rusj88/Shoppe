@@ -45,7 +45,7 @@
     z-index: 100;
     display: flex;
     flex-direction: column;
-    height: 90dvh;
+    height: 95dvh;
     padding: 10px 16px 64px;
     font-family: $font-dm-sans;
     font-size: 20px;
