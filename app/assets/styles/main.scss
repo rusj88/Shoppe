@@ -1,5 +1,12 @@
 @use 'container';
 
+:root,
+html,
+body,
+#__nuxt {
+  height: 100%;
+}
+
 body {
   margin: 0;
 }
