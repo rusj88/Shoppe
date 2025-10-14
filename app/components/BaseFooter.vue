@@ -19,7 +19,7 @@
     { label: 'TW', to: 'https://x.com/', icon: TwIcon },
   ]
 
-  const { email, isValid, save } = useEmailStorage()
+  const { email, isValid, save, validate } = useEmailStorage()
   const { show } = useAlert()
   const triedSubmit = ref(false)
   const showError = computed(() => triedSubmit.value && !isValid.value)
@@ -27,11 +27,9 @@
   function onSubmit() {
     triedSubmit.value = true
 
-    if (save()) {
-      show({
-        message: 'Email saved',
-        duration: 5000,
-      })
+    if (validate()) {
+      save()
+      show({ message: 'Email saved', duration: 5000 })
     }
   }
 </script>
@@ -49,12 +47,14 @@
           error-message="Please enter a valid email address."
         >
           <template #end>
-            <button type="submit">
+            <button type="submit" class="input-btn">
               <ArrowIcon />
             </button> </template
         ></BaseInput>
         <div class="agreement">
-          <input type="checkbox" /> <span>i agree to the website’s terms and conditions</span>
+          <label>
+            <input type="checkbox" /> <span>i agree to the website’s terms and conditions</span>
+          </label>
         </div>
       </form>
       <nav class="nav">
@@ -217,5 +217,13 @@
       gap: 40px;
       align-items: center;
     }
+  }
+
+  .nav-list a:hover {
+    color: $color-black;
+  }
+
+  .input-btn {
+    padding: 16px;
   }
 </style>

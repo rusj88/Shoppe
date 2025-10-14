@@ -66,8 +66,8 @@
   .end {
     position: absolute;
     top: 0;
-    right: 0;
-    bottom: 10;
+    right: -16px;
+    bottom: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
