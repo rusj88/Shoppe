@@ -42,7 +42,6 @@
     position: relative;
     display: flex;
     justify-content: space-between;
-    min-height: 68px;
     padding: 15px 16px;
     font-family: $font-dm-sans;
     font-size: 12px;
@@ -52,6 +51,7 @@
 
     @media (min-width: $bp-lg) {
       align-items: center;
+      min-height: 68px;
       padding: 20px 23px 16px 39px;
     }
   }
