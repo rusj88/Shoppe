@@ -14,13 +14,9 @@ export function useEmailStorage(key = 'email') {
     }
   })
 
-  function validate() {
-    return isValid.value
-  }
-
   function save() {
     localStorage.setItem(key, trimmed.value)
   }
 
-  return { email, isValid, save, validate }
+  return { email, isValid, save }
 }

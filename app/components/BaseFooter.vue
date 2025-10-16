@@ -19,7 +19,7 @@
     { label: 'TW', to: 'https://x.com/', icon: TwIcon },
   ]
 
-  const { email, isValid, save, validate } = useEmailStorage()
+  const { email, isValid, save } = useEmailStorage()
   const { show } = useAlert()
   const triedSubmit = ref(false)
   const showError = computed(() => triedSubmit.value && !isValid.value)
@@ -27,7 +27,7 @@
   function onSubmit() {
     triedSubmit.value = true
 
-    if (validate()) {
+    if (isValid.value) {
       save()
       show({ message: 'Email saved', duration: 5000 })
     }
