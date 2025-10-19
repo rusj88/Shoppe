@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 24 24" width="24" height="24"
+     role="img" aria-label="Warning"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 3 L21.5 19.5a1 1 0 0 1-.87 1.5H3.37a1 1 0 0 1-.87-1.5L12 3z"
+        fill="none" stroke="currentColor" />
+  <path d="M12 9v4" />
+  <path d="M12 17h0" stroke-width="2.5" />
+</svg>

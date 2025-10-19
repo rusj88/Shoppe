@@ -11,13 +11,14 @@
   </div>
   <Transition name="fade" mode="out-in">
     <section class="products">
-      <SkeletonCard v-for="n in 4" v-if="pending" :key="`skeleton-${n}`" />
+      <SkeletonCard v-for="n in 4" v-if="pending" :key="`skeleton-${n}`" class="card-wrapper" />
 
       <p v-else-if="error" class="error">Unable to fetch products. Try again later</p>
 
       <template v-else>
-        <ProductCard v-for="product in products" :key="product.id" :product="product"
-      /></template>
+        <div v-for="product in products" :key="product.id" class="card-wrapper">
+          <ProductCard :product="product" /></div
+      ></template>
     </section>
   </Transition>
 </template>
@@ -35,6 +36,14 @@
 
     @media (min-width: $bp-lg) {
       flex-basis: 380px;
+    }
+  }
+
+  .card-wrapper {
+    width: 136px;
+
+    @media (min-width: $bp-lg) {
+      width: 380px;
     }
   }
 

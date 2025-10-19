@@ -93,12 +93,11 @@
   .card {
     display: flex;
     flex-direction: column;
-    width: 136px;
+    width: 100%;
     font-family: $font-dm-sans;
     font-size: 14px;
 
     @media (min-width: $bp-lg) {
-      width: 380px;
       font-size: 20px;
     }
   }
