@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref } from 'vue'
+  import { computed, ref, watch } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { useGetProducts } from '@/composables/api/useGetProducts'
   import FiltersIcon from '@/assets/icons/filters.svg'
@@ -11,22 +11,36 @@
   const route = useRoute()
   const router = useRouter()
 
-  const perPage = 6
-  const currentPage = computed(() => Number(route.query.page) || 1)
+  const PER_PAGE = 6
 
-  const totalPages = computed(() =>
-    products.value ? Math.ceil(products.value.length / perPage) : 1,
+  const page = computed<number>({
+    get: () => Number(route.query.page) || 1,
+    set: (val: number) => {
+      router.push({ query: { ...route.query, page: val } })
+    },
+  })
+
+  const totalItems = computed(() => products.value?.length ?? 0)
+
+  watch(
+    [totalItems, () => route.query.page],
+    () => {
+      const pages = Math.max(1, Math.ceil(totalItems.value / PER_PAGE))
+      const rawPage = Math.max(1, Number(route.query.page) || 1)
+      const validPage = Math.min(rawPage, pages)
+
+      if (validPage !== rawPage) {
+        router.replace({ query: { ...route.query, page: validPage } })
+      }
+    },
+    { immediate: true },
   )
 
   const paginated = computed(() => {
-    if (!products.value) return []
-    const start = (currentPage.value - 1) * perPage
-    return products.value.slice(start, start + perPage)
+    const list = products.value ?? []
+    const start = (page.value - 1) * PER_PAGE
+    return list.slice(start, start + PER_PAGE)
   })
-
-  function goToPage(page: number) {
-    router.push({ query: { ...route.query, page } })
-  }
 
   const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value)
 </script>
@@ -38,13 +52,15 @@
     </BaseDrawer>
   </div>
   <h2 class="heading">Shop <span class="desk-heading">The Latest</span></h2>
-  <button class="icon-row" @click="toggleMenu"><FiltersIcon /> Filters</button>
+  <!-- prettier-ignore -->
+  <button class="icon-row" @click="toggleMenu">
+    <FiltersIcon /> Filters
+  </button>
   <div class="content">
-    <div class="filters-section"><ProductFilters /></div>
+    <ProductFilters class="filters-section" />
     <div class="products-section">
-      <ProductList :products="paginated" />
       <div v-if="pending" class="skeleton-grid">
-        <SkeletonCard v-for="n in perPage" :key="`skeleton-${n}`" class="skeleton-item" />
+        <SkeletonCard v-for="n in PER_PAGE" :key="`skeleton-${n}`" class="skeleton-item" />
       </div>
 
       <div v-else-if="error" class="error">
@@ -52,26 +68,15 @@
         <ErrorIcon />
       </div>
 
-      <div v-if="!pending && totalPages > 1" class="pagination">
-        <button
-          v-for="page in totalPages"
-          :key="page"
-          :disabled="page === currentPage"
-          class="page-btn"
-          :class="{ active: page === currentPage }"
-          @click="goToPage(page)"
-        >
-          {{ page }}
-        </button>
-
-        <button
-          :disabled="currentPage >= totalPages"
-          class="page-btn"
-          @click="goToPage(currentPage + 1)"
-        >
-          >
-        </button>
-      </div>
+      <template v-else>
+        <ProductList :products="paginated" />
+        <BasePagination
+          v-model:page="page"
+          :per-page="PER_PAGE"
+          :total-items="totalItems"
+          class="pagination-block"
+        />
+      </template>
     </div>
   </div>
 </template>
@@ -142,52 +147,25 @@
     text-align: center;
   }
 
-  .pagination {
-    display: flex;
-    gap: 8px;
-    margin-top: auto;
-
-    @media (min-width: $bp-lg) {
-      gap: 12px;
-      margin-top: 86px;
-    }
-  }
-
-  .page-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border: solid 1px $gray-300;
-    border-radius: 4px;
-
-    &.active {
-      color: $color-white;
-      background: $color-black;
-      border-color: transparent;
-    }
-
-    @media (min-width: $bp-lg) {
-      width: 45px;
-      height: 45px;
-    }
-  }
-
   .skeleton-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
-    align-items: center;
-    justify-content: center;
     width: 100%;
   }
 
   .skeleton-item {
-    flex: 0 1 136px;
+    width: 136px;
+    height: 188px;
 
-    @media (min-width: $bp-lg) {
-      flex: 0 1 300px;
+    @media (min-width: $bp-md) {
+      width: 220px;
+      height: 290px;
+    }
+
+    @media (min-width: $bp-xl) {
+      width: 300px;
+      height: 392px;
     }
   }
 
@@ -213,5 +191,9 @@
       fill: none;
       stroke: currentcolor;
     }
+  }
+
+  .pagination-block {
+    margin-top: auto;
   }
 </style>

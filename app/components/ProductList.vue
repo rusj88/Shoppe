@@ -8,8 +8,8 @@
 
 <template>
   <div class="products">
-    <div v-for="product in products" :key="product.id" class="card-wrapper">
-      <ProductCard :product="product" />
+    <div v-for="product in products" :key="product.id">
+      <ProductCard :product="product" class="product-card" />
     </div>
   </div>
 </template>
@@ -19,26 +19,26 @@
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
-    align-items: center;
-    justify-content: center;
     width: 100%;
-    margin-bottom: 26px;
-
-    @media (min-width: $bp-md) {
-      justify-content: flex-start;
-    }
+    margin-bottom: 20px;
 
     @media (min-width: $bp-lg) {
-      justify-content: center;
-      margin-bottom: 0;
+      margin-bottom: 86px;
     }
   }
 
-  .card-wrapper {
-    flex: 0 1 136px;
+  .product-card {
+    width: 136px;
+    height: 188px;
 
-    @media (min-width: $bp-lg) {
-      flex: 0 1 300px;
+    @media (min-width: $bp-md) {
+      width: 220px;
+      height: 290px;
+    }
+
+    @media (min-width: $bp-xl) {
+      width: 300px;
+      height: 392px;
     }
   }
 </style>
