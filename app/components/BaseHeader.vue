@@ -72,12 +72,19 @@
   <div class="search-container">
     <SearchInput placeholder="Search" />
   </div>
-  <BaseDrawer v-model="isMenuOpen">
-    <MobileMenu :links="links" />
-  </BaseDrawer>
+  <div class="drawer-wrapper">
+    <BaseDrawer v-model="isMenuOpen">
+      <MobileMenu :links="links" />
+    </BaseDrawer>
+  </div>
 </template>
 
 <style lang="scss" scoped>
+  .drawer-wrapper {
+    position: relative;
+    z-index: 200;
+  }
+
   .header {
     display: flex;
     align-items: center;

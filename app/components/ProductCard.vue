@@ -93,28 +93,27 @@
   .card {
     display: flex;
     flex-direction: column;
-    width: 136px;
+    gap: 8px;
+    width: 100%;
     font-family: $font-dm-sans;
     font-size: 14px;
 
     @media (min-width: $bp-lg) {
-      width: 380px;
+      gap: 16px;
       font-size: 20px;
     }
   }
 
   .title {
     display: -webkit-box;
-    margin-bottom: 8px;
+    min-height: calc(2 * 26px);
+    margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     -webkit-line-clamp: 2;
     line-clamp: 2;
+    line-height: 26px;
     -webkit-box-orient: vertical;
-
-    @media (min-width: $bp-lg) {
-      margin-bottom: 16px;
-    }
   }
 
   .price {
@@ -135,17 +134,18 @@
     height: 136px;
     margin-bottom: 8px;
     overflow: hidden;
+    background-color: $gray-300;
     border-radius: 4px;
 
     @media (min-width: $bp-lg) {
       height: 380px;
-      margin-bottom: 24px;
+      margin-bottom: 8px;
     }
   }
 
   .image-container img {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 80%;
+    max-height: 80%;
     object-fit: contain;
   }
 </style>
