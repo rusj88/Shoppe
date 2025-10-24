@@ -12,8 +12,7 @@
     (e: 'update:page', value: number): void
   }>()
 
-  const { xl } = useBreakpointsTyped()
-  const isNarrow = computed(() => !xl.value)
+  const { xl: isWide } = useBreakpointsTyped()
   const totalPages = computed(() => Math.max(1, Math.ceil(props.totalItems / props.perPage)))
   const isFirst = computed(() => props.page <= 1)
   const isLast = computed(() => props.page >= totalPages.value)
@@ -28,7 +27,7 @@
   const displayItems = computed<(number | '…')[]>(() => {
     const total = totalPages.value
     const current = props.page
-    const sibling = isNarrow.value ? 1 : 2
+    const sibling = isWide.value ? 2 : 1
     const items: (number | '…')[] = []
 
     if (total <= 7 + sibling) {
