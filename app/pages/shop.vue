@@ -1,17 +1,80 @@
 <script setup lang="ts">
-  import { computed, ref, watch } from 'vue'
+  import { computed, reactive, ref, watch } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { useGetProducts } from '@/composables/api/useGetProducts'
   import FiltersIcon from '@/assets/icons/filters.svg'
   import ErrorIcon from '@/assets/icons/error.svg'
-
-  const { data: products, pending, error } = useGetProducts()
+  import type { ProductFilters } from '@/types'
 
   const isMenuOpen = ref(false)
   const route = useRoute()
   const router = useRouter()
-
   const PER_PAGE = 6
+
+  const {
+    data: products,
+    pending,
+    error,
+    refresh,
+  } = useGetProducts(computed(() => filters.category))
+
+  const filters = reactive<ProductFilters>({
+    category: (route.query.category as string) || undefined,
+    sortBy: (route.query.sortBy as string) || undefined,
+    search: (route.query.search as string) || undefined,
+    priceRange: route.query.price
+      ? (route.query.price as string).split(',').map(Number)
+      : undefined,
+  })
+
+  watch(
+    filters,
+    (newFilters, oldFilters) => {
+      const query: Record<string, string | number> = {}
+      if (newFilters.category) query.category = newFilters.category
+      if (newFilters.sortBy) query.sortBy = newFilters.sortBy
+      if (newFilters.search) query.search = newFilters.search
+      if (newFilters.priceRange) query.price = newFilters.priceRange.join(',')
+
+      const filtersChanged =
+        oldFilters &&
+        (newFilters.category !== oldFilters.category ||
+          newFilters.sortBy !== oldFilters.sortBy ||
+          newFilters.search !== oldFilters.search ||
+          JSON.stringify(newFilters.priceRange) !== JSON.stringify(oldFilters.priceRange))
+
+      let pageNumber: number
+      if (filtersChanged) {
+        pageNumber = 1
+      } else {
+        pageNumber = Number(route.query.page) || 1
+      }
+      query.page = pageNumber
+
+      const currentQuery = { ...route.query }
+      if (JSON.stringify(currentQuery) !== JSON.stringify(query)) {
+        router.push({ query })
+      }
+    },
+    { deep: true },
+  )
+
+  watch(
+    () => route.query,
+    (query) => {
+      filters.category = (query.category as string) || undefined
+      filters.sortBy = (query.sortBy as string) || undefined
+      filters.search = (query.search as string) || undefined
+      filters.priceRange = query.price ? (query.price as string).split(',').map(Number) : undefined
+    },
+  )
+
+  watch(
+    () => filters.category,
+    () => {
+      refresh()
+    },
+  )
 
   const page = computed<number>({
     get: () => Number(route.query.page) || 1,
@@ -20,7 +83,54 @@
     },
   })
 
-  const totalItems = computed(() => products.value?.length ?? 0)
+  const totalItems = computed(() => filteredProducts.value.length)
+
+  const paginated = computed(() => {
+    const list = filteredProducts.value
+    const start = (page.value - 1) * PER_PAGE
+    return list.slice(start, start + PER_PAGE)
+  })
+
+  const filteredProducts = computed(() => {
+    let productList = products.value ?? []
+
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase()
+      productList = productList.filter((product) =>
+        product.title?.toLowerCase().includes(searchLower),
+      )
+    }
+
+    if (filters.priceRange && filters.priceRange.length === 2) {
+      const [minPrice, maxPrice] = filters.priceRange
+      productList = productList.filter((product) => {
+        const price = product.price || 0
+        return price >= minPrice && price <= maxPrice
+      })
+    }
+
+    if (!filters.sortBy) {
+      return productList
+    }
+
+    const sorted = [...productList]
+
+    if (filters.sortBy === 'Name') {
+      sorted.sort((a, b) => {
+        const nameA = a.title?.toLowerCase() || ''
+        const nameB = b.title?.toLowerCase() || ''
+        return nameA.localeCompare(nameB)
+      })
+    } else if (filters.sortBy === 'Price') {
+      sorted.sort((a, b) => {
+        const priceA = a.price || 0
+        const priceB = b.price || 0
+        return priceA - priceB
+      })
+    }
+
+    return sorted
+  })
 
   watch(
     [totalItems, () => route.query.page],
@@ -36,19 +146,13 @@
     { immediate: true },
   )
 
-  const paginated = computed(() => {
-    const list = products.value ?? []
-    const start = (page.value - 1) * PER_PAGE
-    return list.slice(start, start + PER_PAGE)
-  })
-
   const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value)
 </script>
 
 <template>
   <div class="drawer-wrapper">
     <BaseDrawer v-model="isMenuOpen">
-      <ProductFilters @closeFilters="toggleMenu" />
+      <ProductFilters v-model:filters="filters" @closeFilters="toggleMenu" />
     </BaseDrawer>
   </div>
   <h2 class="heading">Shop <span class="desk-heading">The Latest</span></h2>
@@ -57,7 +161,7 @@
     <FiltersIcon /> Filters
   </button>
   <div class="content">
-    <ProductFilters class="filters-section" />
+    <ProductFilters v-model:filters="filters" class="filters-section" />
     <div class="products-section">
       <div v-if="pending" class="skeleton-grid">
         <SkeletonCard v-for="n in PER_PAGE" :key="`skeleton-${n}`" class="skeleton-item" />
@@ -66,6 +170,10 @@
       <div v-else-if="error" class="error">
         <p>Failed to load products.</p>
         <ErrorIcon />
+      </div>
+
+      <div v-else-if="paginated.length === 0">
+        <p>No products found.</p>
       </div>
 
       <template v-else>
@@ -128,7 +236,6 @@
 
   .filters-section {
     display: none;
-    background: $gray-300;
 
     @media (min-width: $bp-lg) {
       display: block;
@@ -140,6 +247,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
   }
 
   .loading {
@@ -147,23 +255,27 @@
   }
 
   .skeleton-grid {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
     width: 100%;
+    margin-bottom: 20px;
+
+    @media (min-width: $bp-md) {
+      grid-template-columns: repeat(3, 1fr);
+      margin-bottom: 86px;
+    }
   }
 
   .skeleton-item {
-    width: 136px;
+    width: 100%;
     height: 188px;
 
     @media (min-width: $bp-md) {
-      width: 220px;
       height: 290px;
     }
 
     @media (min-width: $bp-xl) {
-      width: 300px;
       height: 392px;
     }
   }

@@ -20,3 +20,10 @@ export interface Product {
   category: string
   image: string
 }
+
+export interface ProductFilters {
+  category?: string
+  sortBy?: string
+  search?: string
+  priceRange?: number[]
+}

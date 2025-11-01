@@ -1,10 +1,20 @@
 import { defineNuxtConfig } from 'nuxt/config'
+import Aura from '@primevue/themes/aura'
 
 export default defineNuxtConfig({
   srcDir: 'app',
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxt/fonts', 'nuxt-svgo'],
+  modules: ['@nuxt/fonts', 'nuxt-svgo', '@primevue/nuxt-module'],
+
+  // @ts-ignore
+  primevue: {
+    options: {
+      theme: {
+        preset: Aura,
+      },
+    },
+  },
 
   css: ['@/assets/styles/main.scss'],
 
