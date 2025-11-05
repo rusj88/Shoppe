@@ -1,29 +1,21 @@
 <script setup lang="ts">
+  const model = defineModel<string | null>()
+
   defineProps<{
-    modelValue: string | undefined
     options: { name: string }[]
     placeholder: string
   }>()
-
-  const emit = defineEmits<{
-    'update:modelValue': [value: string | undefined]
-  }>()
-
-  const handleUpdate = (value: string | null) => {
-    emit('update:modelValue', value ?? undefined)
-  }
 </script>
 
 <template>
   <div class="base-select">
     <Select
-      :model-value="modelValue ?? null"
+      v-model="model"
       :options="options"
       option-label="name"
       option-value="name"
       :placeholder="placeholder"
       showClear
-      @update:model-value="handleUpdate"
     />
   </div>
 </template>

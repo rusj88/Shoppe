@@ -17,5 +17,12 @@ export function useGetProducts(category?: MaybeRef<string | undefined>, delayMs 
     onRequest: async () => {
       if (delayMs) await new Promise((r) => setTimeout(r, delayMs))
     },
+    transform: (products: Product[]) => {
+      return products.map((product) => ({
+        ...product,
+        discount: Math.random() < 0.25,
+        soldout: Math.random() < 0.1,
+      })) as Product[]
+    },
   })
 }

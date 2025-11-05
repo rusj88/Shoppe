@@ -6,20 +6,14 @@
     required: true,
   })
 
-  const props = withDefaults(
-    defineProps<{
-      min?: number
-      max?: number
-    }>(),
-    {
-      min: 0,
-      max: 1000,
-    },
-  )
+  const { min = 0, max = 1000 } = defineProps<{
+    min?: number
+    max?: number
+  }>()
 </script>
 
 <template>
-  <Slider v-model="modelValue" :min="props.min" :max="props.max" range class="pv-slider-custom" />
+  <Slider v-model="modelValue" :min="min" :max="max" range class="pv-slider-custom" />
 </template>
 
 <style lang="scss">

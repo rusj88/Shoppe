@@ -8,8 +8,6 @@
 
   const PRICE_RANGE = [0, 1000]
   const range = ref(PRICE_RANGE)
-  const onSale = ref(false)
-  const inStock = ref(false)
   const searchInput = ref(filters.value?.search ?? '')
 
   let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null
@@ -40,7 +38,11 @@
         clearTimeout(rangeDebounceTimer)
       }
       rangeDebounceTimer = setTimeout(() => {
-        filters.value.priceRange = newValue
+        if (JSON.stringify(newValue) === JSON.stringify(PRICE_RANGE)) {
+          filters.value.priceRange = undefined
+        } else {
+          filters.value.priceRange = newValue
+        }
       }, 800)
     },
     { deep: true },
@@ -67,8 +69,12 @@
   const order = [{ name: 'Name' }, { name: 'Price' }]
 
   const resetRange = () => {
+    if (rangeDebounceTimer) {
+      clearTimeout(rangeDebounceTimer)
+      rangeDebounceTimer = null
+    }
     range.value = PRICE_RANGE
-    filters.value.priceRange = PRICE_RANGE
+    filters.value.priceRange = undefined
   }
 
   defineEmits(['closeFilters'])
@@ -103,8 +109,8 @@
       </div>
     </div>
     <div class="toggles">
-      <div class="toggle"><span>On sale</span><ToggleSwitch v-model="onSale" /></div>
-      <div class="toggle"><span>In stock</span><ToggleSwitch v-model="inStock" /></div>
+      <div class="toggle"><span>On sale</span><ToggleSwitch v-model="filters.onSale" /></div>
+      <div class="toggle"><span>In stock</span><ToggleSwitch v-model="filters.inStock" /></div>
     </div>
   </div>
 </template>

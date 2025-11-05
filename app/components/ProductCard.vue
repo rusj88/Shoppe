@@ -41,6 +41,10 @@
   >
     <div class="image-container">
       <img :src="product.image" />
+      <div class="badge-container">
+        <span v-if="product.discount" class="badge">- %20</span>
+        <span v-if="product.soldout" class="badge">Sold out</span>
+      </div>
       <button class="add-btn" @click="addToCart">ADD TO CART</button>
     </div>
     <span class="title">{{ product.title }}</span>
@@ -147,5 +151,28 @@
     max-width: 80%;
     max-height: 80%;
     object-fit: contain;
+  }
+
+  .badge-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px;
+
+    @media (min-width: $bp-xl) {
+      gap: 6px;
+      padding: 16px;
+    }
+  }
+
+  .badge {
+    padding: 2px 8px;
+    font-size: 12px;
+    color: $color-white;
+    background: $color-accent-light;
+    border-radius: 4px;
   }
 </style>

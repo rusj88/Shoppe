@@ -1,94 +1,33 @@
 <script setup lang="ts">
-  import { computed, reactive, ref, watch } from 'vue'
+  import { computed, reactive, ref, toRef, watch } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { useGetProducts } from '@/composables/api/useGetProducts'
   import FiltersIcon from '@/assets/icons/filters.svg'
   import ErrorIcon from '@/assets/icons/error.svg'
   import type { ProductFilters } from '@/types'
+  import { validatePriceRange } from '@/utils/validators'
 
-  const isMenuOpen = ref(false)
+  const PER_PAGE = 6
   const route = useRoute()
   const router = useRouter()
-  const PER_PAGE = 6
-
-  const {
-    data: products,
-    pending,
-    error,
-    refresh,
-  } = useGetProducts(computed(() => filters.category))
+  const isMenuOpen = ref(false)
 
   const filters = reactive<ProductFilters>({
     category: (route.query.category as string) || undefined,
     sortBy: (route.query.sortBy as string) || undefined,
     search: (route.query.search as string) || undefined,
-    priceRange: route.query.price
-      ? (route.query.price as string).split(',').map(Number)
-      : undefined,
+    priceRange: validatePriceRange(route.query.price as string),
+    onSale: route.query.onSale === 'true',
+    inStock: route.query.inStock === 'true',
   })
 
-  watch(
-    filters,
-    (newFilters, oldFilters) => {
-      const query: Record<string, string | number> = {}
-      if (newFilters.category) query.category = newFilters.category
-      if (newFilters.sortBy) query.sortBy = newFilters.sortBy
-      if (newFilters.search) query.search = newFilters.search
-      if (newFilters.priceRange) query.price = newFilters.priceRange.join(',')
-
-      const filtersChanged =
-        oldFilters &&
-        (newFilters.category !== oldFilters.category ||
-          newFilters.sortBy !== oldFilters.sortBy ||
-          newFilters.search !== oldFilters.search ||
-          JSON.stringify(newFilters.priceRange) !== JSON.stringify(oldFilters.priceRange))
-
-      let pageNumber: number
-      if (filtersChanged) {
-        pageNumber = 1
-      } else {
-        pageNumber = Number(route.query.page) || 1
-      }
-      query.page = pageNumber
-
-      const currentQuery = { ...route.query }
-      if (JSON.stringify(currentQuery) !== JSON.stringify(query)) {
-        router.push({ query })
-      }
-    },
-    { deep: true },
-  )
-
-  watch(
-    () => route.query,
-    (query) => {
-      filters.category = (query.category as string) || undefined
-      filters.sortBy = (query.sortBy as string) || undefined
-      filters.search = (query.search as string) || undefined
-      filters.priceRange = query.price ? (query.price as string).split(',').map(Number) : undefined
-    },
-  )
-
-  watch(
-    () => filters.category,
-    () => {
-      refresh()
-    },
-  )
+  const { data: products, pending, error, refresh } = useGetProducts(toRef(filters, 'category'))
 
   const page = computed<number>({
     get: () => Number(route.query.page) || 1,
     set: (val: number) => {
       router.push({ query: { ...route.query, page: val } })
     },
-  })
-
-  const totalItems = computed(() => filteredProducts.value.length)
-
-  const paginated = computed(() => {
-    const list = filteredProducts.value
-    const start = (page.value - 1) * PER_PAGE
-    return list.slice(start, start + PER_PAGE)
   })
 
   const filteredProducts = computed(() => {
@@ -107,6 +46,14 @@
         const price = product.price || 0
         return price >= minPrice && price <= maxPrice
       })
+    }
+
+    if (filters.onSale) {
+      productList = productList.filter((product) => product.discount === true)
+    }
+
+    if (filters.inStock) {
+      productList = productList.filter((product) => product.soldout !== true)
     }
 
     if (!filters.sortBy) {
@@ -132,6 +79,80 @@
     return sorted
   })
 
+  const totalItems = computed(() => filteredProducts.value.length)
+
+  const paginated = computed(() => {
+    const list = filteredProducts.value
+    const start = (page.value - 1) * PER_PAGE
+    return list.slice(start, start + PER_PAGE)
+  })
+
+  watch(
+    filters,
+    (newFilters, oldFilters) => {
+      const query: Record<string, string | number> = {}
+
+      if (newFilters.category) query.category = newFilters.category
+      if (newFilters.sortBy) query.sortBy = newFilters.sortBy
+      if (newFilters.search) query.search = newFilters.search
+      if (newFilters.priceRange) query.price = newFilters.priceRange.join(',')
+      if (newFilters.onSale) query.onSale = 'true'
+      if (newFilters.inStock) query.inStock = 'true'
+
+      const filtersChanged =
+        oldFilters &&
+        (newFilters.category !== oldFilters.category ||
+          newFilters.sortBy !== oldFilters.sortBy ||
+          newFilters.search !== oldFilters.search ||
+          newFilters.onSale !== oldFilters.onSale ||
+          newFilters.inStock !== oldFilters.inStock ||
+          JSON.stringify(newFilters.priceRange) !== JSON.stringify(oldFilters.priceRange))
+
+      let pageNumber: number
+      if (filtersChanged) {
+        pageNumber = 1
+      } else {
+        pageNumber = Number(route.query.page) || 1
+      }
+      query.page = pageNumber
+
+      const currentQuery = { ...route.query }
+      if (JSON.stringify(currentQuery) !== JSON.stringify(query)) {
+        router.push({ query })
+      }
+    },
+    { deep: true },
+  )
+
+  watch(
+    () => route.query,
+    (query) => {
+      filters.category = (query.category as string) || undefined
+      filters.sortBy = (query.sortBy as string) || undefined
+      filters.search = (query.search as string) || undefined
+
+      const validatedPrice = validatePriceRange(query.price as string)
+      filters.priceRange = validatedPrice
+
+      filters.onSale = query.onSale === 'true'
+      filters.inStock = query.inStock === 'true'
+
+      if (query.price && !validatedPrice) {
+        const cleanQuery = { ...query }
+        delete cleanQuery.price
+        router.replace({ query: cleanQuery })
+      }
+    },
+    { immediate: true },
+  )
+
+  watch(
+    () => filters.category,
+    () => {
+      refresh()
+    },
+  )
+
   watch(
     [totalItems, () => route.query.page],
     () => {
@@ -146,9 +167,10 @@
     { immediate: true },
   )
 
-  const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value)
+  const toggleMenu = () => {
+    isMenuOpen.value = !isMenuOpen.value
+  }
 </script>
-
 <template>
   <div class="drawer-wrapper">
     <BaseDrawer v-model="isMenuOpen">
