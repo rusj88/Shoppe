@@ -1,6 +1,10 @@
 import { useCookie, useFetch, useRuntimeConfig, type UseFetchOptions } from 'nuxt/app'
+import type { MaybeRef } from 'vue'
 
-export const useApiFetch = <DataT = unknown>(request: string, options?: UseFetchOptions<DataT>) => {
+export const useApiFetch = <DataT = unknown>(
+  request: MaybeRef<string>,
+  options?: UseFetchOptions<DataT>,
+) => {
   const config = useRuntimeConfig()
   const authToken = useCookie('authToken')
 

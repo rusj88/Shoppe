@@ -19,4 +19,15 @@ export interface Product {
   description: string
   category: string
   image: string
+  discount: boolean
+  soldout: boolean
+}
+
+export interface ProductFilters {
+  category?: string
+  sortBy?: string
+  search?: string
+  priceRange?: number[]
+  onSale: boolean
+  inStock: boolean
 }
