@@ -1,6 +1,6 @@
 import type { SwiperOptions, SwiperModule } from 'swiper/types'
 
-export type NavLink = { label: string; to: string }
+export type NavLink = { label: string; to?: string; onClick?: () => void }
 
 export interface MySwiperOptions {
   modules?: SwiperModule[]
