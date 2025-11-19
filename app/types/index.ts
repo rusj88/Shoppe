@@ -31,3 +31,13 @@ export interface ProductFilters {
   onSale: boolean
   inStock: boolean
 }
+
+export interface CartItem extends Product {
+  quantity: number
+}
+
+export interface CartState {
+  isOpen: boolean
+  items: CartItem[]
+  syncTimeout: ReturnType<typeof setTimeout> | null
+}

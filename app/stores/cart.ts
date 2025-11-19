@@ -1,18 +1,14 @@
 import { defineStore } from 'pinia'
-import type { Product } from '@/types'
-
-export interface CartItem extends Product {
-  quantity: number
-}
+import type { CartState, CartItem, Product } from '@/types'
 
 const CART_STORAGE_KEY = 'cart-items'
 const CART_SYNC_DELAY = 800
 
 export const useCartStore = defineStore('cart', {
-  state: () => ({
+  state: (): CartState => ({
     isOpen: false,
-    items: [] as CartItem[],
-    syncTimeout: null as ReturnType<typeof setTimeout> | null,
+    items: [],
+    syncTimeout: null,
   }),
 
   getters: {
@@ -104,13 +100,13 @@ export const useCartStore = defineStore('cart', {
       this.updateStorageAndSync()
     },
 
-    removeItem(productId: string | number) {
+    removeItem(productId: number) {
       this.items = this.items.filter((item) => item.id !== productId)
 
       this.updateStorageAndSync()
     },
 
-    updateQuantity(productId: string | number, quantity: number) {
+    updateQuantity(productId: number, quantity: number) {
       if (quantity <= 0) {
         this.removeItem(productId)
         return
