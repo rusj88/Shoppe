@@ -6,44 +6,32 @@ export interface CartItem extends Product {
 }
 
 const CART_STORAGE_KEY = 'cart-items'
-
-let syncTimeout: ReturnType<typeof setTimeout> | null = null
+const CART_SYNC_DELAY = 800
 
 export const useCartStore = defineStore('cart', {
   state: () => ({
     isOpen: false,
     items: [] as CartItem[],
+    syncTimeout: null as ReturnType<typeof setTimeout> | null,
   }),
 
   getters: {
-    itemCount(state): number {
+    itemCount(state) {
       return state.items.reduce((total, item) => total + item.quantity, 0)
     },
 
-    uniqueItemCount(state): number {
+    uniqueItemCount(state) {
       return state.items.length
     },
 
-    total(state): number {
+    total(state) {
       return state.items.reduce((total, item) => total + item.price * item.quantity, 0)
-    },
-
-    isInCart(state) {
-      return (productId: string | number): boolean =>
-        state.items.some((item) => item.id === productId)
-    },
-
-    getProductQuantity(state) {
-      return (productId: string | number): number => {
-        const item = state.items.find((item) => item.id === productId)
-        return item?.quantity ?? 0
-      }
     },
   },
 
   actions: {
     loadFromStorage() {
-      if (!process.client) return
+      if (!import.meta.client) return
 
       try {
         const raw = localStorage.getItem(CART_STORAGE_KEY)
@@ -57,7 +45,7 @@ export const useCartStore = defineStore('cart', {
     },
 
     saveToStorage() {
-      if (!process.client) return
+      if (!import.meta.client) return
 
       try {
         localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(this.items))
@@ -67,11 +55,11 @@ export const useCartStore = defineStore('cart', {
     },
 
     debounceSync() {
-      if (syncTimeout) clearTimeout(syncTimeout)
+      if (this.syncTimeout) clearTimeout(this.syncTimeout)
 
-      syncTimeout = setTimeout(() => {
+      this.syncTimeout = setTimeout(() => {
         this.syncCart()
-      }, 800)
+      }, CART_SYNC_DELAY)
     },
 
     updateStorageAndSync() {
@@ -98,14 +86,6 @@ export const useCartStore = defineStore('cart', {
       } catch (error) {
         console.error('Failed to sync cart:', error)
       }
-    },
-
-    open() {
-      this.isOpen = true
-    },
-
-    close() {
-      this.isOpen = false
     },
 
     toggle() {

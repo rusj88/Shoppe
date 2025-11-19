@@ -28,7 +28,7 @@
   })
 
   function handleCheckout() {
-    cartStore.close()
+    cartStore.toggle()
     router.push('/checkout')
   }
 </script>
@@ -37,11 +37,11 @@
   <Teleport to="body">
     <Transition name="sidebar">
       <div v-if="cartStore.isOpen" class="sidebar-wrapper">
-        <div class="sidebar-fog" @click="cartStore.close()" />
+        <div class="sidebar-fog" @click="cartStore.toggle()" />
 
         <aside class="sidebar">
           <div class="sidebar-header">
-            <button class="close-btn" @click="cartStore.close()"><BackIcon /></button>
+            <button class="close-btn" @click="cartStore.toggle()"><BackIcon /></button>
             <h2>Shopping bag</h2>
           </div>
 

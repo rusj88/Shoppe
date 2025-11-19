@@ -25,7 +25,7 @@
   }
 
   function openCart() {
-    cartStore.open()
+    cartStore.toggle()
     hide()
   }
 

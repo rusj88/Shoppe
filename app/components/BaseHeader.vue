@@ -38,7 +38,7 @@
 
   const actions = [
     { name: 'search', icon: FindIcon },
-    { name: 'cart', icon: CartIcon, onClick: () => cartStore.toggle() },
+    { name: 'cart', icon: CartIcon, onClick: cartStore.toggle },
     { name: 'account', icon: UserIcon },
   ]
 </script>
@@ -158,6 +158,7 @@
     .icon--cart,
     .icon--burger {
       display: inline-flex;
+      cursor: pointer;
     }
 
     @media (min-width: $bp-md) {
