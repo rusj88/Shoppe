@@ -7,9 +7,12 @@
   import CartIcon from '@/assets/icons/cart.svg'
   import BurgerIcon from '@/assets/icons/burger.svg'
   import CloseIcon from '@/assets/icons/close.svg'
+  import { useCartStore } from '@/stores/cart'
 
   const isMenuOpen = ref(false)
   const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value)
+
+  const cartStore = useCartStore()
 
   const route = useRoute()
   watch(
@@ -35,7 +38,7 @@
 
   const actions = [
     { name: 'search', icon: FindIcon },
-    { name: 'cart', icon: CartIcon },
+    { name: 'cart', icon: CartIcon, onClick: cartStore.toggle },
     { name: 'account', icon: UserIcon },
   ]
 </script>
@@ -60,6 +63,7 @@
           :key="action.name"
           class="icon"
           :class="`icon--${action.name}`"
+          @click="action.onClick ? action.onClick() : undefined"
         >
           <component :is="action.icon" />
         </span>
@@ -154,6 +158,7 @@
     .icon--cart,
     .icon--burger {
       display: inline-flex;
+      cursor: pointer;
     }
 
     @media (min-width: $bp-md) {

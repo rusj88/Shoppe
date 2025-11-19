@@ -15,9 +15,17 @@
             <p class="message">{{ state.message }}</p>
           </div>
 
-          <NuxtLink v-if="state.link" :to="state.link.to" class="alert-link">
+          <NuxtLink v-if="state.link && state.link.to" :to="state.link.to" class="alert-link">
             {{ state.link.label }}
           </NuxtLink>
+
+          <button
+            v-else-if="state.link && state.link.onClick"
+            class="alert-link"
+            @click="state.link.onClick"
+          >
+            {{ state.link.label }}
+          </button>
         </div>
       </div>
     </div>

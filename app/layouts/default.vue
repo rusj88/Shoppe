@@ -6,6 +6,7 @@
     </main>
     <BaseFooter />
     <BaseAlert />
+    <CartSidebar />
   </div>
 </template>
 

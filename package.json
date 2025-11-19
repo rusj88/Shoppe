@@ -36,11 +36,13 @@
   },
   "dependencies": {
     "@nuxt/fonts": "^0.11.4",
+    "@pinia/nuxt": "^0.11.3",
     "@primeuix/themes": "^1.2.5",
     "@primevue/themes": "^4.4.1",
     "@vueuse/core": "^14.0.0",
     "nuxt": "3.17.3",
     "nuxt-svgo": "^4.2.6",
+    "pinia": "^3.0.4",
     "primevue": "^4.4.1",
     "swiper": "^12.0.2",
     "vue": "^3.5.21",

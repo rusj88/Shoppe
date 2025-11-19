@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   srcDir: 'app',
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxt/fonts', 'nuxt-svgo', '@primevue/nuxt-module'],
+  modules: ['@nuxt/fonts', 'nuxt-svgo', '@primevue/nuxt-module', '@pinia/nuxt'],
 
   // @ts-ignore
   primevue: {

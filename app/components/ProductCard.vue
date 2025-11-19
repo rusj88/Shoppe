@@ -3,12 +3,14 @@
   import { ref } from 'vue'
   import { vClickOutside } from '@/directives/vClickOutside'
   import { Product } from '@/types'
+  import { useCartStore } from '@/stores/cart'
 
-  defineProps<{
+  const props = defineProps<{
     product: Product
   }>()
 
-  const { show } = useAlert()
+  const { show, hide } = useAlert()
+  const cartStore = useCartStore()
 
   const revealed = ref(false)
   const cardEl = ref<HTMLElement | null>(null)
@@ -22,10 +24,16 @@
     revealed.value = false
   }
 
+  function openCart() {
+    cartStore.toggle()
+    hide()
+  }
+
   function addToCart() {
+    cartStore.addItem(props.product)
     show({
       message: 'The item was added to your Shopping bag.',
-      link: { to: '/cart', label: 'VIEW CART' },
+      link: { onClick: openCart, label: 'VIEW CART' },
       duration: 5000,
     })
   }
@@ -45,7 +53,7 @@
         <span v-if="product.discount" class="badge">- %20</span>
         <span v-if="product.soldout" class="badge">Sold out</span>
       </div>
-      <button class="add-btn" @click="addToCart">ADD TO CART</button>
+      <button v-if="!product.soldout" class="add-btn" @click="addToCart">ADD TO CART</button>
     </div>
     <span class="title">{{ product.title }}</span>
     <span class="price">$ {{ product.price }}</span>
