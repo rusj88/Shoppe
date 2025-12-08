@@ -23,6 +23,10 @@ export interface Product {
   soldout: boolean
 }
 
+export interface RatedProduct extends Product {
+  rating: number
+}
+
 export interface ProductFilters {
   category?: string
   sortBy?: string
