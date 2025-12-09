@@ -98,7 +98,6 @@
     height: 100%;
     padding-top: 13px;
     background: white;
-    box-shadow: -2px 0 8px rgb(0 0 0 / 15%);
   }
 
   @media (min-width: $bp-md) {

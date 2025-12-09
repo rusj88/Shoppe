@@ -1,4 +1,4 @@
-import type { Product, RatedProduct } from '@/types'
+import type { Product } from '@/types'
 import { useApiFetch } from '@/composables/api/useApiFetch'
 import { computed, type MaybeRef, unref } from 'vue'
 
@@ -8,13 +8,7 @@ export function useGetProduct(id: MaybeRef<string>) {
     return `/products/${productId}`
   })
 
-  return useApiFetch<RatedProduct>(url, {
+  return useApiFetch<Product>(url, {
     server: false,
-    transform: (product: Product): RatedProduct => {
-      return {
-        ...product,
-        rating: Math.floor(Math.random() * 5) + 1,
-      }
-    },
   })
 }

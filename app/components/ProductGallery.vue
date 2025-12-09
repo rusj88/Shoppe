@@ -31,13 +31,11 @@
 
 <template>
   <div class="product-gallery">
-    <div class="product-gallery-mobile">
-      <BaseSlider :settings="sliderSettings">
-        <SwiperSlide v-for="(src, index) in images" :key="index" class="product-gallery-slide">
-          <img :src="src" :alt="`Product image ${index + 1}`" loading="lazy" />
-        </SwiperSlide>
-      </BaseSlider>
-    </div>
+    <BaseSlider :settings="sliderSettings" class="product-gallery-slider">
+      <SwiperSlide v-for="(src, index) in images" :key="index" class="product-gallery-slide">
+        <img :src="src" :alt="`Product image ${index + 1}`" loading="lazy" />
+      </SwiperSlide>
+    </BaseSlider>
 
     <div class="product-gallery-desktop">
       <div class="product-gallery-thumbs">
@@ -60,12 +58,6 @@
 </template>
 
 <style scoped lang="scss">
-  .product-gallery-mobile {
-    @media (min-width: $bp-lg) {
-      display: none;
-    }
-  }
-
   .product-gallery-desktop {
     display: none;
 
@@ -136,5 +128,28 @@
     max-width: 90%;
     max-height: 90%;
     object-fit: contain;
+  }
+
+  .product-gallery-slider {
+    @media (min-width: $bp-lg) {
+      display: none;
+    }
+
+    :deep(.swiper-pagination-bullet) {
+      position: relative;
+      z-index: 2;
+    }
+
+    :deep(.swiper-pagination-bullet::before) {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      content: '';
+      background: transparent;
+      transform: translate(-50%, -50%);
+    }
   }
 </style>

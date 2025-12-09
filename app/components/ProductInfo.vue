@@ -1,26 +1,14 @@
 <script setup lang="ts">
-  import type { RatedProduct } from '@/types'
+  import type { Product } from '@/types'
   import Rating from 'primevue/rating'
   import { ref, computed } from 'vue'
-  import { useCartStore } from '@/stores/cart'
-  import { useAlert } from '@/composables/useAlert'
-
-  import MailIcon from '@/assets/icons/email.svg'
-  import FbIcon from '@/assets/icons/fb.svg'
-  import IgIcon from '@/assets/icons/ig.svg'
-  import TwIcon from '@/assets/icons/tw.svg'
   import ChevronRight from '@/assets/icons/chevron-right.svg'
 
   const props = defineProps<{
-    product: RatedProduct
+    product: Product
   }>()
 
-  const cartStore = useCartStore()
-  const { show, hide } = useAlert()
-
-  const ratingValue = ref(props.product.rating)
-  const quantity = ref(1)
-
+  const ratingValue = ref(props.product.rating.rate)
   const showFullDescription = ref(false)
   const MAX_MOBILE_CHARS = 80
 
@@ -30,34 +18,7 @@
     return desc.slice(0, MAX_MOBILE_CHARS) + '…'
   })
 
-  const socialmedia = [
-    { label: 'Email', to: 'mailto:shopppe@shop.com', icon: MailIcon },
-    { label: 'FB', to: 'https://www.facebook.com/', icon: FbIcon },
-    { label: 'IG', to: 'https://www.instagram.com/', icon: IgIcon },
-    { label: 'TW', to: 'https://x.com/', icon: TwIcon },
-  ]
-
-  const inc = () => {
-    quantity.value++
-  }
-
-  const dec = () => {
-    if (quantity.value > 1) quantity.value--
-  }
-
-  function openCart() {
-    cartStore.toggle()
-    hide()
-  }
-
-  function addToCart() {
-    cartStore.addItem(props.product, quantity.value)
-    show({
-      message: 'The item was added to your Shopping bag.',
-      link: { onClick: openCart, label: 'VIEW CART' },
-      duration: 5000,
-    })
-  }
+  const toggleDescription = () => (showFullDescription.value = !showFullDescription.value)
 </script>
 
 <template>
@@ -68,13 +29,12 @@
     </div>
 
     <div class="product-content">
-      <Rating v-model="ratingValue" class="custom-rating" />
+      <div class="rating-container">
+        <Rating v-model="ratingValue" readonly class="custom-rating" />
+        <span class="rating-count">{{ product.rating.count }} customer review</span>
+      </div>
 
-      <button
-        type="button"
-        class="description-toggle"
-        @click="showFullDescription = !showFullDescription"
-      >
+      <button type="button" class="description-toggle" @click="toggleDescription">
         {{ showFullDescription ? 'Hide' : 'View more' }}
         <ChevronRight class="toggle-icon" :class="{ rotated: showFullDescription }" />
       </button>
@@ -87,34 +47,10 @@
         {{ product.description }}
       </p>
 
-      <div class="cart-controls">
-        <div class="quantity-controls">
-          <button class="qty-btn" type="button" @click="dec">−</button>
-          <span class="quantity">{{ quantity }}</span>
-          <button class="qty-btn" type="button" @click="inc">+</button>
-        </div>
-
-        <button class="add-btn" type="button" @click="addToCart">ADD TO CART</button>
-      </div>
+      <ProductCartControls :product="product" />
     </div>
 
-    <div class="product-footer">
-      <div class="icons-block">
-        <a
-          v-for="link in socialmedia"
-          :key="link.label"
-          :href="link.to"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="social-link"
-          :aria-label="link.label"
-        >
-          <component :is="link.icon" class="social-icon" />
-        </a>
-      </div>
-      <span class="label">SKU:</span> 12 <br />
-      <span class="label">Categories:</span> Fashion, Style
-    </div>
+    <ProductFooter :sku="product.id" :category="product.category" />
   </div>
 </template>
 
@@ -225,95 +161,21 @@
     }
   }
 
-  .cart-controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 23px;
-    height: 32px;
-
-    @media (min-width: $bp-lg) {
-      height: 53px;
-      margin-bottom: 81px;
-      font-size: 16px;
-    }
-  }
-
-  .quantity-controls {
+  .rating-container {
     display: none;
-    gap: 6px;
-    align-items: center;
-    align-self: flex-end;
-    justify-content: center;
-    width: 83px;
-    height: 100%;
-    margin-top: auto;
-    font-family: $font-dm-sans;
-    font-size: 14px;
-    background: $light-gray;
-    border-radius: 4px;
 
     @media (min-width: $bp-lg) {
       display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: center;
     }
   }
 
-  .qty-btn {
-    width: 24px;
-    height: 24px;
-    font-family: $font-dm-sans;
-    font-size: 16px;
-    cursor: pointer;
-    background: transparent;
-  }
-
-  .add-btn {
-    flex: 1 1 auto;
-    padding: 8px 0;
-    font-family: $font-dm-sans;
-    font-size: 12px;
-    white-space: normal;
-    border: 1px solid black;
-    border-radius: 4px;
-
-    @media (min-width: $bp-lg) {
-      font-size: 16px;
-    }
-  }
-
-  .icons-block {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    margin-bottom: 38px;
-
-    &:deep(svg) {
-      width: 12px;
-      height: 12px;
-      color: $gray-600;
-    }
-
-    @media (min-width: $bp-lg) {
-      &:deep(svg) {
-        width: 18px;
-        height: 18px;
-      }
-    }
-  }
-
-  .product-footer {
-    display: none;
-    gap: 6px;
+  .rating-count {
     font-family: $font-dm-sans;
     font-size: 16px;
     color: $gray-600;
-
-    @media (min-width: $bp-lg) {
-      display: block;
-    }
-  }
-
-  .label {
-    color: $color-black;
   }
 
   .custom-rating {
@@ -321,11 +183,5 @@
     --p-rating-icon-color: $gray-700;
     --p-rating-icon-hover-color: $color-black;
     --p-rating-icon-active-color: $color-black;
-
-    display: none;
-
-    @media (min-width: $bp-lg) {
-      display: flex;
-    }
   }
 </style>

@@ -18,7 +18,6 @@ export const useApiFetch = <DataT = unknown>(
 
   const defaults: UseFetchOptions<DataT> = {
     baseURL: baseFormatted,
-    key: request + JSON.stringify(options?.params), // нужно для кеширования
     headers: {
       'Content-Type': 'application/json',
       Authorization: authToken.value ? `Bearer ${authToken.value}` : '',
