@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useRouter } from 'vue-router'
   import { useAlert } from '@/composables/useAlert'
   import { ref } from 'vue'
   import { vClickOutside } from '@/directives/vClickOutside'
@@ -9,11 +10,17 @@
     product: Product
   }>()
 
+  const router = useRouter()
+
   const { show, hide } = useAlert()
   const cartStore = useCartStore()
 
   const revealed = ref(false)
   const cardEl = ref<HTMLElement | null>(null)
+
+  function goToProduct() {
+    router.push(`/shop/${props.product.id}`)
+  }
 
   function onCardTap() {
     if (!revealed.value) {
@@ -47,15 +54,15 @@
     :class="{ revealed }"
     @click="onCardTap"
   >
-    <div class="image-container">
+    <div class="image-container" @click="goToProduct">
       <img :src="product.image" />
       <div class="badge-container">
         <span v-if="product.discount" class="badge">- %20</span>
         <span v-if="product.soldout" class="badge">Sold out</span>
       </div>
-      <button v-if="!product.soldout" class="add-btn" @click="addToCart">ADD TO CART</button>
+      <button v-if="!product.soldout" class="add-btn" @click.stop="addToCart">ADD TO CART</button>
     </div>
-    <span class="title">{{ product.title }}</span>
+    <span class="title" @click="goToProduct">{{ product.title }}</span>
     <span class="price">$ {{ product.price }}</span>
   </article>
 </template>
@@ -126,6 +133,7 @@
     line-clamp: 2;
     line-height: 26px;
     -webkit-box-orient: vertical;
+    cursor: pointer;
   }
 
   .price {
@@ -146,6 +154,7 @@
     height: 136px;
     margin-bottom: 8px;
     overflow: hidden;
+    cursor: pointer;
     background-color: $gray-300;
     border-radius: 4px;
 

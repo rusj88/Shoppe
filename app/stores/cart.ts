@@ -88,13 +88,15 @@ export const useCartStore = defineStore('cart', {
       this.isOpen = !this.isOpen
     },
 
-    addItem(product: Product) {
+    addItem(product: Product, quantity = 1) {
+      if (quantity <= 0) return
+
       const existing = this.items.find((item) => item.id === product.id)
 
       if (existing) {
-        existing.quantity++
+        existing.quantity += quantity
       } else {
-        this.items.push({ ...product, quantity: 1 })
+        this.items.push({ ...product, quantity })
       }
 
       this.updateStorageAndSync()
