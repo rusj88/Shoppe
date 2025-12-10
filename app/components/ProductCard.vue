@@ -133,6 +133,7 @@
     line-clamp: 2;
     line-height: 26px;
     -webkit-box-orient: vertical;
+    cursor: pointer;
   }
 
   .price {
@@ -153,6 +154,7 @@
     height: 136px;
     margin-bottom: 8px;
     overflow: hidden;
+    cursor: pointer;
     background-color: $gray-300;
     border-radius: 4px;
 
