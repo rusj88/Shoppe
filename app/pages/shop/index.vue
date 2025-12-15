@@ -199,7 +199,7 @@
       </div>
 
       <template v-else>
-        <ProductList :products="paginated" />
+        <CatalogueItems :products="paginated" />
         <BasePagination
           v-model:page="page"
           :per-page="PER_PAGE"

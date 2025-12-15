@@ -1,15 +1,8 @@
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue'
   import { useAlert } from '@/composables/useAlert'
-
-  type Review = {
-    id: number
-    name: string
-    email: string
-    rating: number
-    comment: string
-    createdAt: number
-  }
+  import type { Review } from '@/types'
+  import { getLocalStorageItem, setLocalStorageItem } from '@/utils/localStorage'
 
   const props = defineProps<{
     productId: number
@@ -31,27 +24,21 @@
     return `${count} ${label} for ${props.productName}`
   })
 
-  function notifyCount() {
+  function onCountChange() {
     emit('change-count', reviews.value.length)
   }
 
   function loadReviews() {
-    if (typeof window === 'undefined') return
-    const raw = window.localStorage.getItem(storageKey.value)
-    if (!raw) return
+    const stored = getLocalStorageItem<Review[]>(storageKey.value)
 
-    try {
-      reviews.value = JSON.parse(raw) as Review[]
-    } catch {
-      reviews.value = []
+    if (stored) {
+      reviews.value = stored
+      onCountChange()
     }
-
-    notifyCount()
   }
 
   function saveReviews() {
-    if (typeof window === 'undefined') return
-    window.localStorage.setItem(storageKey.value, JSON.stringify(reviews.value))
+    setLocalStorageItem(storageKey.value, reviews.value)
   }
 
   onMounted(loadReviews)
@@ -68,7 +55,8 @@
 
     reviews.value = [newReview, ...reviews.value]
     saveReviews()
-    notifyCount()
+    onCountChange()
+
     show({ message: 'Review submitted', duration: 4000 })
   }
 </script>
@@ -92,9 +80,15 @@
 <style scoped lang="scss">
   .reviews-section {
     display: flex;
-    gap: 80px;
+    flex-direction: column;
+    gap: 20px;
     align-items: flex-start;
     justify-content: space-between;
+
+    @media (min-width: $bp-lg) {
+      flex-direction: row;
+      gap: 80px;
+    }
   }
 
   .review-list {

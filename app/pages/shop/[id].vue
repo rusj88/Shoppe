@@ -16,7 +16,7 @@
   })
 
   const bp = useBreakpointsTyped()
-  const wrapper = computed(() => (bp.lg.value ? BaseTabs : BaseAccordeon))
+  const tabsWrapper = computed(() => (bp.lg.value ? BaseTabs : BaseAccordeon))
 
   const reviewCount = ref(0)
 
@@ -57,13 +57,13 @@
       </div>
 
       <ClientOnly>
-        <component :is="wrapper">
+        <component :is="tabsWrapper">
           <BaseTab name="description" label="Description">
-            <p>Lorem ipsum dolor sit amet…</p>
+            <p class="tab-paragraph">Lorem ipsum dolor sit amet…</p>
           </BaseTab>
 
           <BaseTab name="additional" label="Additional information">
-            <p>More info here…</p>
+            <p class="tab-paragraph">More info here…</p>
           </BaseTab>
 
           <BaseTab name="reviews" :label="`Reviews (${reviewCount})`">
@@ -121,5 +121,9 @@
     @media (min-width: $bp-lg) {
       display: none;
     }
+  }
+
+  .tab-paragraph {
+    margin: 0;
   }
 </style>

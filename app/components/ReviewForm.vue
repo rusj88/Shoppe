@@ -1,6 +1,16 @@
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue'
   import Rating from 'primevue/rating'
+  import {
+    getLocalStorageItem,
+    setLocalStorageItem,
+    removeLocalStorageItem,
+  } from '@/utils/localStorage'
+
+  type RememberedDetails = {
+    name?: string
+    email?: string
+  }
 
   const emit = defineEmits<{
     (
@@ -30,33 +40,23 @@
   )
 
   function loadRememberedDetails() {
-    if (typeof window === 'undefined') return
-    const raw = window.localStorage.getItem(REMEMBER_KEY)
-    if (!raw) return
+    const parsed = getLocalStorageItem<RememberedDetails>(REMEMBER_KEY)
+    if (!parsed) return
 
-    try {
-      const parsed = JSON.parse(raw) as { name?: string; email?: string }
-      if (typeof parsed?.name === 'string') name.value = parsed.name
-      if (typeof parsed?.email === 'string') email.value = parsed.email
-      remember.value = Boolean((parsed?.name ?? '').trim() || (parsed?.email ?? '').trim())
-    } catch {}
+    if (typeof parsed.name === 'string') name.value = parsed.name
+    if (typeof parsed.email === 'string') email.value = parsed.email
+
+    remember.value = Boolean((parsed.name ?? '').trim() || (parsed.email ?? '').trim())
   }
 
   function persistRememberedDetails() {
-    if (typeof window === 'undefined') {
-      return
-    }
-
     if (remember.value) {
-      window.localStorage.setItem(
-        REMEMBER_KEY,
-        JSON.stringify({
-          name: name.value.trim(),
-          email: email.value.trim(),
-        }),
-      )
+      setLocalStorageItem<RememberedDetails>(REMEMBER_KEY, {
+        name: name.value.trim(),
+        email: email.value.trim(),
+      })
     } else {
-      window.localStorage.removeItem(REMEMBER_KEY)
+      removeLocalStorageItem(REMEMBER_KEY)
     }
   }
 
@@ -102,34 +102,32 @@
       <textarea
         id="review-comment"
         v-model="comment"
-        class="control textarea"
+        class="review-textarea"
         placeholder="Your Review*"
       />
       <p v-if="triedSubmit && !isCommentValid" class="error">Please enter at least a few words.</p>
     </div>
 
     <div class="field">
-      <input
+      <BaseInput
         id="review-name"
         v-model="name"
-        type="text"
         autocomplete="name"
-        class="control input"
         placeholder="Enter your name*"
+        :error="triedSubmit && !isNameValid"
+        error-message="Please enter your name."
       />
-      <p v-if="triedSubmit && !isNameValid" class="error">Please enter your name.</p>
     </div>
 
     <div class="field">
-      <input
+      <BaseInput
         id="review-email"
         v-model="email"
-        type="email"
         autocomplete="email"
-        class="control input"
         placeholder="Enter your Email*"
+        :error="triedSubmit && !isEmailValid"
+        error-message="Please enter a valid email."
       />
-      <p v-if="triedSubmit && !isEmailValid" class="error">Please enter a valid email.</p>
     </div>
 
     <label class="remember">
@@ -151,9 +149,12 @@
 
 <style scoped lang="scss">
   .review-form {
-    flex: 0 0 580px;
     font-family: $font-dm-sans;
     color: $color-black;
+
+    @media (min-width: $bp-lg) {
+      flex: 0 0 580px;
+    }
   }
 
   .title {
@@ -174,30 +175,24 @@
     margin-bottom: 18px;
   }
 
-  .control {
+  .review-textarea {
     width: 100%;
-    height: 36px;
-    padding: 2px 0;
-    font-family: inherit;
-    font-size: 12px;
-    color: $color-black;
+    min-height: 36px;
+    padding: 0;
+    padding-bottom: 10px;
+    margin: 0;
+    overflow-y: auto;
+    font: inherit;
+    color: inherit;
+    resize: none;
     outline: none;
     background: transparent;
     border: none;
-    border-bottom: 1px solid $gray-300;
-  }
-
-  .textarea {
-    overflow-y: auto;
-    resize: none;
+    border-bottom: 1px solid $color-black;
 
     &::-webkit-scrollbar {
       display: none;
     }
-  }
-
-  .control:focus {
-    border-bottom-color: $color-black;
   }
 
   .remember {

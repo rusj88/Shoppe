@@ -42,3 +42,12 @@ export interface CartState {
   items: CartItem[]
   syncTimeout: ReturnType<typeof setTimeout> | null
 }
+
+export type Review = {
+  id: number
+  name: string
+  email: string
+  rating: number
+  comment: string
+  createdAt: number
+}

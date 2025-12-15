@@ -1,15 +1,7 @@
 <script setup lang="ts">
   import { computed } from 'vue'
   import Rating from 'primevue/rating'
-
-  type Review = {
-    id: number
-    name: string
-    email: string
-    rating: number
-    comment: string
-    createdAt: number
-  }
+  import type { Review } from '@/types'
 
   const props = defineProps<{ review: Review }>()
 
@@ -51,9 +43,12 @@
   }
 
   .name {
+    flex: 1;
+    min-width: 0;
     font-family: $font-dm-sans;
     font-size: 20px;
     color: $color-black;
+    overflow-wrap: anywhere;
   }
 
   .date {

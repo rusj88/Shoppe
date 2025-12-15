@@ -1,20 +1,11 @@
 <script setup lang="ts">
   import { ref, useSlots, computed, watchEffect } from 'vue'
+  import { mapNamedSlots } from '@/utils/mapNamedSlots'
 
   const slots = useSlots()
   const active = ref<string | null>(null)
 
-  const tabs = computed(() => {
-    const children = slots.default?.() ?? []
-
-    return children
-      .filter((vnode) => vnode.type && vnode.props?.name)
-      .map((vnode) => ({
-        name: vnode.props!.name as string,
-        label: vnode.props!.label as string,
-        vnode,
-      }))
-  })
+  const tabs = computed(() => mapNamedSlots(slots))
 
   watchEffect(() => {
     if (!active.value && tabs.value.length) {
