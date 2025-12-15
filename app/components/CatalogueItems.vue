@@ -8,9 +8,12 @@
 
 <template>
   <div class="products">
-    <div v-for="product in products" :key="product.id">
-      <ProductCard :product="product" class="product-card" />
-    </div>
+    <ProductCard
+      v-for="product in products"
+      :key="product.id"
+      :product="product"
+      class="product-card"
+    />
   </div>
 </template>
 

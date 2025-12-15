@@ -21,6 +21,7 @@
   const reviewTitle = computed(() => {
     const count = reviews.value.length
     const label = count === 1 ? 'Review' : 'Reviews'
+
     return `${count} ${label} for ${props.productName}`
   })
 

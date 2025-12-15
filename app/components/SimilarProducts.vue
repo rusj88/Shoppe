@@ -8,15 +8,17 @@
   }>()
 
   const categoryRef = toRef(props, 'category')
-  const { data, pending, error } = useGetProducts(categoryRef, 0)
+  const { data, pending, error } = useGetProducts(categoryRef)
 
   const similarProducts = computed(() => {
     const items = data.value ?? []
     return props.excludeId == null ? items : items.filter((p) => p.id !== props.excludeId)
   })
-
+  const DEFAULT_SKELETON_COUNT = 4
   const skeletonCount = computed(() =>
-    !pending.value && similarProducts.value.length ? similarProducts.value.length : 4,
+    !pending.value && similarProducts.value.length
+      ? similarProducts.value.length
+      : DEFAULT_SKELETON_COUNT,
   )
 </script>
 

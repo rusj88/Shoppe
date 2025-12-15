@@ -40,6 +40,7 @@
     display: flex;
     flex-wrap: nowrap;
     gap: 16px;
+    justify-content: space-between;
     overflow-x: auto;
     scrollbar-width: none;
   }

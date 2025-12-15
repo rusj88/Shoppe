@@ -51,7 +51,7 @@
 
   function persistRememberedDetails() {
     if (remember.value) {
-      setLocalStorageItem<RememberedDetails>(REMEMBER_KEY, {
+      setLocalStorageItem(REMEMBER_KEY, {
         name: name.value.trim(),
         email: email.value.trim(),
       })
