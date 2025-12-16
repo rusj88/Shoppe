@@ -16,7 +16,7 @@ export function getLocalStorageItem<T>(key: string) {
   }
 }
 
-export function setLocalStorageItem<T>(key: string, value: T) {
+export function setLocalStorageItem(key: string, value: unknown) {
   if (typeof window === 'undefined') {
     return
   }
