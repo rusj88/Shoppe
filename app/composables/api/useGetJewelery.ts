@@ -1,11 +1,16 @@
 import type { Product } from '@/types'
 import { useApiFetch } from '@/composables/api/useApiFetch'
 
-export function useJeweleryProducts(delayMs = 1200) {
+export function useJeweleryProducts() {
   return useApiFetch<Product[]>('/products/category/jewelery', {
     server: false,
-    onRequest: async () => {
-      if (delayMs) await new Promise((r) => setTimeout(r, delayMs))
+
+    transform: (products: Product[]) => {
+      return products.map((product) => ({
+        ...product,
+        discount: Math.random() < 0.25,
+        soldout: Math.random() < 0.1,
+      })) as Product[]
     },
   })
 }
