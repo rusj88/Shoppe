@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import LogoutIcon from '@/assets/icons/logout.svg'
-  import UserIcon from '@/assets/icons/user.svg'
   import type { NavLink } from '@/types'
+  import { useAuthStore } from '@/stores/auth'
 
   const props = withDefaults(
     defineProps<{
@@ -11,6 +11,10 @@
       links: () => [],
     },
   )
+
+  const auth = useAuthStore()
+
+  const handleLogout = () => auth.logout()
 </script>
 
 <template>
@@ -25,14 +29,16 @@
   <ul class="mm-actions">
     <li>
       <NuxtLink to="/account" class="row">
-        <span class="icon"> <UserIcon /></span>
+        <span class="icon">
+          <UserStatusIcon />
+        </span>
         <span>My account</span>
       </NuxtLink>
     </li>
     <li>
-      <span class="row"
-        ><span class="icon"><LogoutIcon /></span> <span>Logout</span></span
-      >
+      <span class="row" @click="handleLogout">
+        <span class="icon"><LogoutIcon /></span> <span>Logout</span>
+      </span>
     </li>
   </ul>
 </template>

@@ -1,18 +1,21 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue'
-  import { useRoute } from 'nuxt/app'
+  import { ref, watch, computed } from 'vue'
+  import { useRoute, navigateTo } from 'nuxt/app'
 
   import FindIcon from '@/assets/icons/find.svg'
-  import UserIcon from '@/assets/icons/user.svg'
   import CartIcon from '@/assets/icons/cart.svg'
   import BurgerIcon from '@/assets/icons/burger.svg'
   import CloseIcon from '@/assets/icons/close.svg'
   import { useCartStore } from '@/stores/cart'
+  import { useAuthStore } from '@/stores/auth'
+  import { useAlert } from '@/composables/useAlert'
 
   const isMenuOpen = ref(false)
   const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value)
 
   const cartStore = useCartStore()
+  const auth = useAuthStore()
+  const { show: showAlert } = useAlert()
 
   const route = useRoute()
   watch(
@@ -36,11 +39,23 @@
 
   const links = linksDesktop.concat(linksMobile)
 
-  const actions = [
+  const handleAuthAction = async () => {
+    if (!auth.user.token) {
+      await navigateTo('/account')
+      return
+    }
+    auth.logout()
+
+    showAlert({
+      message: 'You have been logged out',
+    })
+  }
+
+  const actions = computed(() => [
     { name: 'search', icon: FindIcon },
     { name: 'cart', icon: CartIcon, onClick: cartStore.toggle },
-    { name: 'account', icon: UserIcon },
-  ]
+    { name: 'account', onClick: handleAuthAction },
+  ])
 </script>
 
 <template>
@@ -62,10 +77,11 @@
           v-for="action in actions"
           :key="action.name"
           class="icon"
-          :class="`icon--${action.name}`"
+          :class="[`icon--${action.name}`]"
           @click="action.onClick ? action.onClick() : undefined"
         >
-          <component :is="action.icon" />
+          <UserStatusIcon v-if="action.name === 'account'" />
+          <component :is="action.icon" v-else />
         </span>
         <button class="icon icon--burger burger-btn" type="button" @click="toggleMenu">
           <component :is="isMenuOpen ? CloseIcon : BurgerIcon" />
