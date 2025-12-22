@@ -2,7 +2,7 @@
   import { Pagination, Autoplay, Virtual } from 'swiper/modules'
   import type { SwiperModule } from 'swiper/types'
   import type { MySwiperOptions } from '@/types'
-  import SlideOverlay from './SlideOverlay.vue'
+  import SlideOverlay from './layout/SlideOverlay.vue'
   import { SwiperSlide } from 'swiper/vue'
 
   const slides = Array.from(

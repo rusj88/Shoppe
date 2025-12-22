@@ -2,6 +2,7 @@
   import LogoutIcon from '@/assets/icons/logout.svg'
   import type { NavLink } from '@/types'
   import { useAuthStore } from '@/stores/auth'
+  import { computed, onMounted, ref } from 'vue'
 
   const props = withDefaults(
     defineProps<{
@@ -14,7 +15,11 @@
 
   const auth = useAuthStore()
 
-  const handleLogout = () => auth.logout()
+  const hydrated = ref(false)
+  onMounted(() => {
+    hydrated.value = true
+  })
+  const isLoggedIn = computed(() => hydrated.value && !!auth.user.token)
 </script>
 
 <template>
@@ -30,13 +35,13 @@
     <li>
       <NuxtLink to="/account" class="row">
         <span class="icon">
-          <UserStatusIcon />
+          <UserStatusIcon :is-logged-in="isLoggedIn" />
         </span>
         <span>My account</span>
       </NuxtLink>
     </li>
     <li>
-      <span class="row" @click="handleLogout">
+      <span class="row" @click="auth.logout">
         <span class="icon"><LogoutIcon /></span> <span>Logout</span>
       </span>
     </li>

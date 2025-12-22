@@ -1,17 +1,25 @@
 import { defineStore } from 'pinia'
 import { navigateTo } from 'nuxt/app'
+import { useApiFetch } from '@/composables/api/useApiFetch'
 import {
   getLocalStorageItem,
   setLocalStorageItem,
   removeLocalStorageItem,
 } from '@/utils/localStorage'
+import { ref } from 'vue'
 
-type User = { token: string | null }
+interface User {
+  token: string | null
+}
+
+interface AuthState {
+  user: User
+}
 
 const AUTH_TOKEN_KEY = 'auth_token'
 
 export const useAuthStore = defineStore('auth', {
-  state: (): { user: User } => ({
+  state: (): AuthState => ({
     user: { token: null },
   }),
 
@@ -20,11 +28,11 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-    loadFromStorage() {
+    loadTokenFromStorage() {
       this.user.token = getLocalStorageItem(AUTH_TOKEN_KEY)
     },
 
-    saveToStorage() {
+    saveTokenToStorage() {
       if (this.user.token) {
         setLocalStorageItem(AUTH_TOKEN_KEY, this.user.token)
       } else {
@@ -33,35 +41,38 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async login(username: string, password: string, remember = false) {
-      const res = await fetch('https://fakestoreapi.com/auth/login', {
+      const { data, error } = await useApiFetch<{ token: string }>('/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: { username, password },
       })
 
-      if (!res.ok) {
-        throw new Error(`Login failed (${res.status})`)
+      if (error.value) {
+        return { error }
       }
 
-      const data = (await res.json()) as { token?: string }
-      if (!data?.token) {
-        throw new Error('Login failed: no token returned')
+      const token = data.value?.token
+      if (!token) {
+        return {
+          error: ref(new Error('Login failed: no token returned')),
+        }
       }
 
-      this.user.token = data.token
+      this.user.token = token
 
       if (remember) {
-        setLocalStorageItem(AUTH_TOKEN_KEY, data.token)
+        setLocalStorageItem(AUTH_TOKEN_KEY, token)
       } else {
         removeLocalStorageItem(AUTH_TOKEN_KEY)
       }
 
       await navigateTo('/')
+
+      return { error: null }
     },
 
     logout() {
       this.user.token = null
-      this.saveToStorage()
+      removeLocalStorageItem(AUTH_TOKEN_KEY)
     },
   },
 })

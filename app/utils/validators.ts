@@ -31,3 +31,7 @@ export const validatePriceRange = (
 
   return [min, max]
 }
+
+export const isEmailValid = (email: string): boolean => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+}

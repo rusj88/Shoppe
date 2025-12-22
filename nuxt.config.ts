@@ -6,6 +6,9 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   modules: ['@nuxt/fonts', 'nuxt-svgo', '@primevue/nuxt-module', '@pinia/nuxt'],
+  components: {
+    dirs: [{ path: '~/components', pathPrefix: false }],
+  },
 
   // @ts-ignore
   primevue: {

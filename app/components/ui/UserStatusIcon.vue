@@ -1,20 +1,13 @@
 <script setup lang="ts">
-  import { computed, onMounted, ref } from 'vue'
-  import { useAuthStore } from '@/stores/auth'
   import UserIcon from '@/assets/icons/user.svg'
 
-  const auth = useAuthStore()
-
-  const hydrated = ref(false)
-  onMounted(() => {
-    hydrated.value = true
-  })
-
-  const isLoggedIn = computed(() => hydrated.value && !!auth.user.token)
+  const props = defineProps<{
+    isLoggedIn: boolean
+  }>()
 </script>
 
 <template>
-  <span class="user-status-icon" :class="{ 'is-logged-in': isLoggedIn }">
+  <span class="user-status-icon" :class="{ 'is-logged-in': props.isLoggedIn }">
     <UserIcon />
   </span>
 </template>

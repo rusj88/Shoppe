@@ -51,3 +51,14 @@ export type Review = {
   comment: string
   createdAt: number
 }
+
+export type SignInPayload = {
+  email: string
+  password: string
+  remember: boolean
+}
+
+export enum AuthMode {
+  SignIn = 'signin',
+  Register = 'register',
+}

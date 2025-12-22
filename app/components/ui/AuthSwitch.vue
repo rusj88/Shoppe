@@ -1,12 +1,12 @@
 <script setup lang="ts">
-  type Mode = 'signin' | 'register'
+  import { AuthMode } from '@/types'
 
   defineProps<{
-    modelValue: Mode
+    modelValue: AuthMode
   }>()
 
-  defineEmits<{
-    (e: 'update:modelValue', v: Mode): void
+  const emit = defineEmits<{
+    (e: 'update:modelValue', v: AuthMode): void
   }>()
 </script>
 
@@ -14,18 +14,18 @@
   <div class="auth-switch">
     <button
       class="tab"
-      :class="{ active: modelValue === 'signin' }"
+      :class="{ active: modelValue === AuthMode.SignIn }"
       type="button"
-      @click="$emit('update:modelValue', 'signin')"
+      @click="emit('update:modelValue', AuthMode.SignIn)"
     >
       sign in
     </button>
 
     <button
       class="tab"
-      :class="{ active: modelValue === 'register' }"
+      :class="{ active: modelValue === AuthMode.Register }"
       type="button"
-      @click="$emit('update:modelValue', 'register')"
+      @click="emit('update:modelValue', AuthMode.Register)"
     >
       Register
     </button>

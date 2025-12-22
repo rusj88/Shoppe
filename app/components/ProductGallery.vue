@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import BaseSlider from '@/components/BaseSlider.vue'
+  import BaseSlider from '@/components/ui/BaseSlider.vue'
   import { SwiperSlide } from 'swiper/vue'
   import type { MySwiperOptions } from '@/types'
   import { Pagination, Autoplay, Virtual } from 'swiper/modules'

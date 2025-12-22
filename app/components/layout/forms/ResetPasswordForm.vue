@@ -1,28 +1,26 @@
 <script setup lang="ts">
   import { ref, computed } from 'vue'
-  import BaseInput from '@/components/BaseInput.vue'
-  import CancelIcon from '@/assets/icons/cancel.svg'
+  import BaseInput from '@/components/ui/BaseInput.vue'
+
   import { useAlert } from '@/composables/useAlert'
+  import { isEmailValid } from '@/utils/validators'
 
   const email = ref('')
   const { show } = useAlert()
 
   const triedSubmit = ref(false)
 
-  const isEmailValid = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()))
-  const hasErrors = computed(() => !isEmailValid.value)
+  const isMailValid = computed(() => isEmailValid(email.value))
 
   function submit() {
     triedSubmit.value = true
-    if (hasErrors.value) return
+    if (!isMailValid.value) {
+      return
+    }
 
     show({
       message: `we'll send a reset email to ${email.value.trim()}`,
     })
-  }
-
-  function clearEmail() {
-    email.value = ''
   }
 </script>
 
@@ -41,15 +39,10 @@
         placeholder="Email"
         autocomplete="email"
         inputmode="email"
-        :error="triedSubmit && !isEmailValid"
+        :error="triedSubmit && !isMailValid"
         error-message="Please enter a valid email."
-      >
-        <template #end>
-          <button v-if="email" class="clear-btn" type="button" @click="clearEmail">
-            <CancelIcon />
-          </button>
-        </template>
-      </BaseInput>
+        clearable
+      />
     </div>
 
     <button class="submit" type="submit">RESET PASSWORD</button>
@@ -137,23 +130,6 @@
       max-width: 500px;
       height: 53px;
       font-size: 16px;
-    }
-  }
-
-  .clear-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
-
-    &:deep(svg) {
-      width: 12px;
-      height: 12px;
-      color: $gray-300;
     }
   }
 </style>

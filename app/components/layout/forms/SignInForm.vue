@@ -1,12 +1,7 @@
 <script setup lang="ts">
   import { ref, computed } from 'vue'
-  import CancelIcon from '@/assets/icons/cancel.svg'
-
-  type SignInPayload = {
-    email: string
-    password: string
-    remember: boolean
-  }
+  import { isEmailValid } from '@/utils/validators'
+  import type { SignInPayload } from '@/types'
 
   const emit = defineEmits<{
     (e: 'submit', payload: SignInPayload): void
@@ -18,13 +13,12 @@
 
   const triedSubmit = ref(false)
 
-  const isEmailValid = computed(() => email.value.trim().length > 0)
+  const isMailValid = computed(() => isEmailValid(email.value))
   const isPasswordValid = computed(() => password.value.trim().length > 0)
-  const hasErrors = computed(() => !isEmailValid.value || !isPasswordValid.value)
 
   function submit() {
     triedSubmit.value = true
-    if (hasErrors.value) {
+    if (!isMailValid.value || !isPasswordValid.value) {
       return
     }
 
@@ -33,10 +27,6 @@
       password: password.value,
       remember: remember.value,
     })
-  }
-
-  function clearEmail() {
-    email.value = ''
   }
 </script>
 
@@ -50,15 +40,10 @@
           placeholder="Email"
           autocomplete="email"
           inputmode="email"
-          :error="triedSubmit && !isEmailValid"
+          :error="triedSubmit && !isMailValid"
           error-message="Please enter a valid login."
-        >
-          <template #end>
-            <button v-if="email" class="clear-btn" type="button" @click="clearEmail">
-              <CancelIcon />
-            </button>
-          </template>
-        </BaseInput>
+          clearable
+        />
       </div>
 
       <div class="input-wrapper">
@@ -115,6 +100,7 @@
     margin-bottom: 12px;
     font-size: 12px;
     color: $color-black;
+    cursor: pointer;
 
     @media (min-width: $bp-lg) {
       margin-bottom: 69px;
@@ -149,6 +135,7 @@
     font-size: 12px;
     color: $color-black;
     text-align: center;
+    cursor: pointer;
 
     @media (min-width: $bp-lg) {
       font-size: 16px;

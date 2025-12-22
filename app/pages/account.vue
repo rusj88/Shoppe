@@ -1,37 +1,30 @@
 <script setup lang="ts">
-  import { onMounted, ref } from 'vue'
+  import { ref, watchEffect } from 'vue'
   import { useAuthStore } from '@/stores/auth'
   import { navigateTo } from 'nuxt/app'
+  import { AuthMode } from '@/types'
+  import type { SignInPayload } from '@/types'
 
-  const mode = ref<'signin' | 'register'>('signin')
+  const mode = ref<AuthMode>(AuthMode.SignIn)
   const auth = useAuthStore()
 
   const serverError = ref<string | null>(null)
   const isSubmitting = ref(false)
 
-  onMounted(() => {
+  watchEffect(() => {
     if (auth.isAuthenticated) {
-      navigateTo('/')
+      navigateTo('/', { replace: true })
     }
   })
 
-  type SignInPayload = {
-    email: string
-    password: string
-    remember: boolean
-  }
-
-  async function onSignInSubmit({ email, password, remember }: SignInPayload) {
-    serverError.value = null
+  async function onSignInSubmit(payload: SignInPayload) {
     isSubmitting.value = true
+    serverError.value = null
 
-    try {
-      await auth.login(email, password, remember)
-    } catch (e) {
-      serverError.value = e instanceof Error ? e.message : 'Something went wrong'
-    } finally {
-      isSubmitting.value = false
-    }
+    const { error } = await auth.login(payload.email, payload.password, payload.remember)
+
+    serverError.value = error?.value ? 'Something went wrong' : null
+    isSubmitting.value = false
   }
 </script>
 
@@ -40,7 +33,7 @@
     <h1 class="title">My account</h1>
     <AuthSwitch v-model="mode" />
 
-    <div v-if="mode === 'signin'" class="form-container">
+    <div v-if="mode === AuthMode.SignIn" class="form-container">
       <SignInForm @submit="onSignInSubmit" />
 
       <p v-if="serverError" class="server-error">

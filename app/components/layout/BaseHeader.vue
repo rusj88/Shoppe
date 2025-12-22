@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, watch, computed } from 'vue'
+  import { ref, watch, computed, onMounted } from 'vue'
   import { useRoute, navigateTo } from 'nuxt/app'
 
   import FindIcon from '@/assets/icons/find.svg'
@@ -9,6 +9,7 @@
   import { useCartStore } from '@/stores/cart'
   import { useAuthStore } from '@/stores/auth'
   import { useAlert } from '@/composables/useAlert'
+  import UserStatusIcon from '@/components/ui/UserStatusIcon.vue'
 
   const isMenuOpen = ref(false)
   const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value)
@@ -54,8 +55,20 @@
   const actions = computed(() => [
     { name: 'search', icon: FindIcon },
     { name: 'cart', icon: CartIcon, onClick: cartStore.toggle },
-    { name: 'account', onClick: handleAuthAction },
+    {
+      name: 'account',
+      component: UserStatusIcon,
+      componentProps: { isLoggedIn: isLoggedIn.value },
+      onClick: handleAuthAction,
+    },
   ])
+
+  const hydrated = ref(false)
+  onMounted(() => {
+    hydrated.value = true
+  })
+
+  const isLoggedIn = computed(() => hydrated.value && !!auth.user.token)
 </script>
 
 <template>
@@ -80,8 +93,12 @@
           :class="[`icon--${action.name}`]"
           @click="action.onClick ? action.onClick() : undefined"
         >
-          <UserStatusIcon v-if="action.name === 'account'" />
-          <component :is="action.icon" v-else />
+          <component
+            :is="action.component"
+            v-if="action.component"
+            v-bind="action.componentProps"
+          />
+          <component :is="action.icon" v-else-if="action.icon" />
         </span>
         <button class="icon icon--burger burger-btn" type="button" @click="toggleMenu">
           <component :is="isMenuOpen ? CloseIcon : BurgerIcon" />
@@ -160,6 +177,7 @@
     justify-content: center;
     width: 20px;
     height: 20px;
+    cursor: pointer;
   }
 
   .actions {
