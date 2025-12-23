@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { ref, computed } from 'vue'
-  import { isEmailValid } from '@/utils/validators'
   import type { SignInPayload } from '@/types'
 
   const emit = defineEmits<{
@@ -13,7 +12,7 @@
 
   const triedSubmit = ref(false)
 
-  const isMailValid = computed(() => isEmailValid(email.value))
+  const isMailValid = computed(() => email.value.trim().length > 0)
   const isPasswordValid = computed(() => password.value.trim().length > 0)
 
   function submit() {

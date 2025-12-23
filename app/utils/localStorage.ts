@@ -19,12 +19,7 @@ export function setLocalStorageItem<T>(key: string, value: T) {
   if (typeof window === 'undefined') {
     return
   }
-
-  if (typeof value === 'string') {
-    window.localStorage.setItem(key, value)
-  } else {
-    window.localStorage.setItem(key, JSON.stringify(value))
-  }
+  window.localStorage.setItem(key, JSON.stringify(value))
 }
 
 export function removeLocalStorageItem(key: string) {
