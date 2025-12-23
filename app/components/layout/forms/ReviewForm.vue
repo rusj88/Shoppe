@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue'
   import Rating from 'primevue/rating'
+  import { isEmailValid } from '@/utils/validators'
   import {
     getLocalStorageItem,
     setLocalStorageItem,
@@ -30,13 +31,12 @@
   const triedSubmit = ref(false)
 
   const isNameValid = computed(() => name.value.trim().length > 0)
-  const isEmailValid = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()))
+  const isMailValid = computed(() => isEmailValid(email.value))
   const isRatingValid = computed(() => rating.value > 0)
   const isCommentValid = computed(() => comment.value.trim().length > 5)
 
   const hasErrors = computed(
-    () =>
-      !isNameValid.value || !isEmailValid.value || !isRatingValid.value || !isCommentValid.value,
+    () => !isNameValid.value || !isMailValid.value || !isRatingValid.value || !isCommentValid.value,
   )
 
   function loadRememberedDetails() {

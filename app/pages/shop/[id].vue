@@ -4,8 +4,8 @@
   import { useGetProduct } from '@/composables/api/useGetProduct'
   import { useBreakpointsTyped } from '@/plugins/breakpoints'
 
-  import BaseTabs from '@/components/BaseTabs.vue'
-  import BaseAccordeon from '@/components/BaseAccordeon.vue'
+  import BaseTabs from '@/components/ui/BaseTabs.vue'
+  import BaseAccordeon from '@/components/ui/BaseAccordeon.vue'
 
   const route = useRoute()
   const { data: product, pending, error } = useGetProduct(route.params.id as string)

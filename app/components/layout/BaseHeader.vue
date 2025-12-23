@@ -1,18 +1,22 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue'
-  import { useRoute } from 'nuxt/app'
+  import { ref, watch, computed, onMounted } from 'vue'
+  import { useRoute, navigateTo } from 'nuxt/app'
 
   import FindIcon from '@/assets/icons/find.svg'
-  import UserIcon from '@/assets/icons/user.svg'
   import CartIcon from '@/assets/icons/cart.svg'
   import BurgerIcon from '@/assets/icons/burger.svg'
   import CloseIcon from '@/assets/icons/close.svg'
   import { useCartStore } from '@/stores/cart'
+  import { useAuthStore } from '@/stores/auth'
+  import { useAlert } from '@/composables/useAlert'
+  import UserStatusIcon from '@/components/ui/UserStatusIcon.vue'
 
   const isMenuOpen = ref(false)
   const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value)
 
   const cartStore = useCartStore()
+  const auth = useAuthStore()
+  const { show: showAlert } = useAlert()
 
   const route = useRoute()
   watch(
@@ -36,11 +40,35 @@
 
   const links = linksDesktop.concat(linksMobile)
 
-  const actions = [
+  const handleAuthAction = async () => {
+    if (!auth.user.token) {
+      await navigateTo('/account')
+      return
+    }
+    auth.logout()
+
+    showAlert({
+      message: 'You have been logged out',
+    })
+  }
+
+  const actions = computed(() => [
     { name: 'search', icon: FindIcon },
     { name: 'cart', icon: CartIcon, onClick: cartStore.toggle },
-    { name: 'account', icon: UserIcon },
-  ]
+    {
+      name: 'account',
+      component: UserStatusIcon,
+      componentProps: { isLoggedIn: isLoggedIn.value },
+      onClick: handleAuthAction,
+    },
+  ])
+
+  const hydrated = ref(false)
+  onMounted(() => {
+    hydrated.value = true
+  })
+
+  const isLoggedIn = computed(() => hydrated.value && !!auth.user.token)
 </script>
 
 <template>
@@ -62,10 +90,15 @@
           v-for="action in actions"
           :key="action.name"
           class="icon"
-          :class="`icon--${action.name}`"
+          :class="[`icon--${action.name}`]"
           @click="action.onClick ? action.onClick() : undefined"
         >
-          <component :is="action.icon" />
+          <component
+            :is="action.component"
+            v-if="action.component"
+            v-bind="action.componentProps"
+          />
+          <component :is="action.icon" v-else-if="action.icon" />
         </span>
         <button class="icon icon--burger burger-btn" type="button" @click="toggleMenu">
           <component :is="isMenuOpen ? CloseIcon : BurgerIcon" />
@@ -144,6 +177,7 @@
     justify-content: center;
     width: 20px;
     height: 20px;
+    cursor: pointer;
   }
 
   .actions {

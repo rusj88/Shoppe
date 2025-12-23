@@ -1,10 +1,9 @@
-export function getLocalStorageItem<T>(key: string) {
+export function getLocalStorageItem<T = string>(key: string): T | null {
   if (typeof window === 'undefined') {
     return null
   }
 
   const raw = window.localStorage.getItem(key)
-
   if (!raw) {
     return null
   }
@@ -12,7 +11,7 @@ export function getLocalStorageItem<T>(key: string) {
   try {
     return JSON.parse(raw) as T
   } catch {
-    return null
+    return raw as unknown as T
   }
 }
 
@@ -20,7 +19,6 @@ export function setLocalStorageItem(key: string, value: unknown) {
   if (typeof window === 'undefined') {
     return
   }
-
   window.localStorage.setItem(key, JSON.stringify(value))
 }
 

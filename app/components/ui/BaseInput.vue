@@ -1,22 +1,22 @@
 <script setup lang="ts">
   import { ref } from 'vue'
+  import CancelIcon from '@/assets/icons/cancel.svg'
 
   defineOptions({ inheritAttrs: false })
 
   const model = defineModel<string | number | null>({ default: '' })
 
-  const props = withDefaults(
-    defineProps<{
-      type?: string
-      error?: boolean
-      errorMessage?: string
-    }>(),
-    {
-      type: 'text',
-      error: false,
-      errorMessage: '',
-    },
-  )
+  const {
+    type = 'text',
+    error = false,
+    errorMessage = '',
+    clearable = false,
+  } = defineProps<{
+    type?: string
+    error?: boolean
+    errorMessage?: string
+    clearable?: boolean
+  }>()
 
   const inputRef = ref<HTMLInputElement | null>(null)
   function focus() {
@@ -28,6 +28,10 @@
   function select() {
     inputRef.value?.select()
   }
+  function clear() {
+    model.value = ''
+  }
+
   defineExpose({ focus, blur, select, el: inputRef })
 </script>
 
@@ -35,11 +39,14 @@
   <div class="field">
     <input ref="inputRef" v-bind="$attrs" v-model="model" :type="type" class="input" />
     <span class="end">
+      <button v-if="clearable && model" type="button" class="clear-btn" @click="clear">
+        <CancelIcon />
+      </button>
       <slot name="end" />
     </span>
   </div>
-  <p v-if="props.error && props.errorMessage" class="error">
-    {{ props.errorMessage }}
+  <p v-if="error && errorMessage" class="error">
+    {{ errorMessage }}
   </p>
 </template>
 
@@ -82,5 +89,22 @@
 
   .error {
     color: $color-accent-red;
+  }
+
+  .clear-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+
+    &:deep(svg) {
+      width: 12px;
+      height: 12px;
+      color: $gray-300;
+    }
   }
 </style>

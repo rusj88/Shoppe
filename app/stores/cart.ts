@@ -26,7 +26,7 @@ export const useCartStore = defineStore('cart', {
   },
 
   actions: {
-    loadFromStorage() {
+    loadTokenFromStorage() {
       if (!import.meta.client) return
 
       try {
@@ -40,7 +40,7 @@ export const useCartStore = defineStore('cart', {
       }
     },
 
-    saveToStorage() {
+    saveTokenToStorage() {
       if (!import.meta.client) return
 
       try {
@@ -59,7 +59,7 @@ export const useCartStore = defineStore('cart', {
     },
 
     updateStorageAndSync() {
-      this.saveToStorage()
+      this.saveTokenToStorage()
       this.debounceSync()
     },
 

@@ -56,7 +56,7 @@
   .drawer__scroll {
     flex: 1 1 auto;
     min-height: 0;
-    overflow-y: auto;
+    overflow: visible;
     -ms-overflow-style: none;
     scrollbar-width: none;
 

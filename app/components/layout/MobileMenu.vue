@@ -1,7 +1,8 @@
 <script setup lang="ts">
   import LogoutIcon from '@/assets/icons/logout.svg'
-  import UserIcon from '@/assets/icons/user.svg'
   import type { NavLink } from '@/types'
+  import { useAuthStore } from '@/stores/auth'
+  import { computed, onMounted, ref } from 'vue'
 
   const props = withDefaults(
     defineProps<{
@@ -11,6 +12,14 @@
       links: () => [],
     },
   )
+
+  const auth = useAuthStore()
+
+  const hydrated = ref(false)
+  onMounted(() => {
+    hydrated.value = true
+  })
+  const isLoggedIn = computed(() => hydrated.value && !!auth.user.token)
 </script>
 
 <template>
@@ -25,14 +34,16 @@
   <ul class="mm-actions">
     <li>
       <NuxtLink to="/account" class="row">
-        <span class="icon"> <UserIcon /></span>
+        <span class="icon">
+          <UserStatusIcon :is-logged-in="isLoggedIn" />
+        </span>
         <span>My account</span>
       </NuxtLink>
     </li>
     <li>
-      <span class="row"
-        ><span class="icon"><LogoutIcon /></span> <span>Logout</span></span
-      >
+      <span class="row" @click="auth.logout">
+        <span class="icon"><LogoutIcon /></span> <span>Logout</span>
+      </span>
     </li>
   </ul>
 </template>
