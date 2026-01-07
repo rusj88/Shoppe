@@ -23,6 +23,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Prepare Nuxt types
+        run: npx nuxt prepare
+
       - name: Get changed JS/TS/Vue files
         id: changed_js
         uses: tj-actions/changed-files@v46
@@ -52,12 +55,7 @@ jobs:
           npx stylelint ${{ steps.changed_css.outputs.all_changed_files }}
 
       - name: Run TypeScript type check
-        run: |
-          if [ -f "tsconfig.json" ]; then
-            npx tsc --noEmit
-          else
-            echo "TypeScript config not found, skipping type check"
-          fi
+        run: npx tsc --noEmit
 
   test:
     name: Run unit tests
@@ -75,6 +73,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Prepare Nuxt types
+        run: npx nuxt prepare
 
       - name: Run tests
         run: npm run test:ci
@@ -97,6 +98,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Prepare Nuxt types
+        run: npx nuxt prepare
 
       - name: Build project
         run: npm run build

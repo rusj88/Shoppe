@@ -64,6 +64,6 @@
     "*.{js,ts,vue}": "eslint --fix",
     "*.{vue,scss}": "stylelint --fix",
     "*.{js,ts,vue,scss,md,json}": "prettier --write",
-    "*": "npm run test:run:staged"
+    "*": "sh -c \"npm run test:run --silent\""
   }
 }
