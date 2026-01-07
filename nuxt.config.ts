@@ -5,7 +5,13 @@ export default defineNuxtConfig({
   srcDir: 'app',
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxt/fonts', 'nuxt-svgo', '@primevue/nuxt-module', '@pinia/nuxt'],
+  modules: [
+    '@nuxt/fonts',
+    'nuxt-svgo',
+    '@primevue/nuxt-module',
+    '@pinia/nuxt',
+    '@nuxt/test-utils/module',
+  ],
   components: {
     dirs: [{ path: '~/components', pathPrefix: false }],
   },

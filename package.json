@@ -12,19 +12,30 @@
     "lint:styles": "stylelint \"**/*.{vue,scss}\"",
     "format": "prettier --write .",
     "lint:fix": "npm run format && npm run lint:styles -- --fix && npm run lint -- --fix",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ci": "vitest run --reporter=default --passWithNoTests",
+    "test:watch": "vitest",
+    "test:run:staged": "vitest run"
   },
   "devDependencies": {
+    "@nuxt/test-utils": "^3.22.0",
     "@primevue/nuxt-module": "^4.4.1",
     "@types/node": "^24.4.0",
     "@typescript-eslint/eslint-plugin": "^8.34.1",
     "@typescript-eslint/parser": "^8.34.1",
+    "@vitejs/plugin-vue": "^6.0.3",
+    "@vue/test-utils": "^2.4.6",
     "eslint": "^9.29.0",
     "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-vitest": "^0.5.4",
     "eslint-plugin-vue": "^10.2.0",
     "globals": "^16.2.0",
+    "happy-dom": "^20.0.11",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
+    "playwright-core": "^1.57.0",
     "postcss-html": "^1.8.0",
     "postcss-scss": "^4.0.9",
     "prettier": "^3.5.3",
@@ -32,7 +43,8 @@
     "stylelint": "^16.21.0",
     "stylelint-config-recess-order": "^7.1.0",
     "stylelint-config-standard-scss": "^15.0.1",
-    "stylelint-config-standard-vue": "^1.0.0"
+    "stylelint-config-standard-vue": "^1.0.0",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@nuxt/fonts": "^0.11.4",
@@ -51,6 +63,7 @@
   "lint-staged": {
     "*.{js,ts,vue}": "eslint --fix",
     "*.{vue,scss}": "stylelint --fix",
-    "*.{js,ts,vue,scss,md,json}": "prettier --write"
+    "*.{js,ts,vue,scss,md,json}": "prettier --write",
+    "*": "npm run test:run:staged"
   }
 }
