@@ -5,6 +5,7 @@ import tsParser from '@typescript-eslint/parser'
 import vue from 'eslint-plugin-vue'
 import vueParser from 'vue-eslint-parser'
 import globals from 'globals'
+import vitest from 'eslint-plugin-vitest'
 
 export default [
   js.configs.recommended,
@@ -16,6 +17,7 @@ export default [
     plugins: {
       vue,
       '@typescript-eslint': tseslint,
+      vitest,
     },
     languageOptions: {
       parser: vueParser,

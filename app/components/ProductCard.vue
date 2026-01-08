@@ -3,7 +3,7 @@
   import { useAlert } from '@/composables/useAlert'
   import { ref } from 'vue'
   import { vClickOutside } from '@/directives/vClickOutside'
-  import { Product } from '@/types'
+  import type { Product } from '@/types'
   import { useCartStore } from '@/stores/cart'
 
   const props = defineProps<{
